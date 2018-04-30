@@ -1,5 +1,6 @@
 package com.example.user.tugasbesarpab;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,12 +14,22 @@ import android.widget.Button;
 
 public class MainMenuFragment extends Fragment implements View.OnClickListener {
     protected Button exitButton, newButton;
+    protected FragmentListener fl;
+
     public MainMenuFragment() {
     }
 
     public static MainMenuFragment newInstance(){
         MainMenuFragment mainMenuFragment=new MainMenuFragment();
         return mainMenuFragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof FragmentListener){
+            this.fl=(FragmentListener)context;
+        }
     }
 
     @Override
@@ -36,7 +47,7 @@ public class MainMenuFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         if(view.getId()==this.newButton.getId()){
-
+            this.fl.changePage(2);
         }
         else if(view.getId()==this.exitButton.getId()){
             getActivity().onBackPressed();

@@ -16,11 +16,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,FragmentListener {
     protected FragmentManager fragmentManager;
     protected MainMenuFragment mainMenuFragment;
     protected SettingsFragment settingsFragment;
     protected HighScoreFragment highScoreFragment;
+    protected CanvasFragment canvasFragment;
+
+    protected DrawerLayout drawer;
+    protected ActionBarDrawerToggle toggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,11 +33,11 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        this.drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        this.toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+        this.drawer.addDrawerListener(toggle);
+        this.toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -41,6 +45,7 @@ public class MainActivity extends AppCompatActivity
         this.mainMenuFragment=MainMenuFragment.newInstance();
         this.settingsFragment=SettingsFragment.newInstance();
         this.highScoreFragment=HighScoreFragment.newInstance();
+        this.canvasFragment=CanvasFragment.newInstance();
 
         this.fragmentManager=this.getSupportFragmentManager();
         FragmentTransaction ft=this.fragmentManager.beginTransaction();
@@ -49,13 +54,15 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+
+
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+
+        if (this.drawer.isDrawerOpen(GravityCompat.START)) {
+            this.drawer.closeDrawer(GravityCompat.START);
         }
-        if(this.settingsFragment.isVisible()){
+        else if(this.settingsFragment.isVisible()){
             FragmentTransaction ft=this.fragmentManager.beginTransaction();
             ft.show(this.mainMenuFragment);
             ft.hide(this.settingsFragment);
@@ -69,8 +76,29 @@ public class MainActivity extends AppCompatActivity
             ft.commit();
             getSupportActionBar().setTitle("TugasBesarPAB");
         }
+        else if(this.canvasFragment.isVisible()){
+           this.changePage(1);
+        }
         else {
             super.onBackPressed();
+        }
+    }
+
+    public void setDrawerState(boolean isEnabled) {
+
+
+        if ( isEnabled ) {
+            this.drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            this.toggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_UNLOCKED);
+            this.toggle.setDrawerIndicatorEnabled(true);
+            this.toggle.syncState();
+
+        }
+        else {
+            this.drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            this.toggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            this.toggle.setDrawerIndicatorEnabled(false);
+            this.toggle.syncState();
         }
     }
 
@@ -116,8 +144,30 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        this.drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void changePage(int i) {
+        FragmentTransaction ft=this.fragmentManager.beginTransaction();
+        if(i==1){
+            ft.show(this.mainMenuFragment);
+            ft.hide(this.canvasFragment);
+            ft.commit();
+            this.setDrawerState(true);
+        }
+        else if(i==2){
+            if(this.canvasFragment.isAdded()){
+                ft.show(this.canvasFragment);
+            }
+            else{
+                ft.add(R.id.fragment_container,this.canvasFragment);
+            }
+            ft.hide(this.mainMenuFragment);
+            ft.commit();
+            this.setDrawerState(false);
+        }
+
     }
 }
