@@ -2,7 +2,6 @@ package com.example.user.tugasbesarpab;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +20,8 @@ public class CanvasFragment extends Fragment implements View.OnClickListener{
     protected ImageView ivCanvas;
     protected TextView timeTv;
     protected Button btnNew,btnExit;
+
+    protected TimerAsyncTask timerAsyncTask;
 
     public CanvasFragment() {
     }
@@ -51,9 +52,27 @@ public class CanvasFragment extends Fragment implements View.OnClickListener{
         return view;
     }
 
+    public void setTimeTv(String time){
+        this.timeTv.setText(time);
+    }
+
+    public void startTimer(){
+        this.timerAsyncTask=new TimerAsyncTask(this);
+        this.timerAsyncTask.execute();
+    }
+
+    /**
+     * method ini dipanggil gamenya udh beres
+     */
+    public void stopTimer(){
+        this.timerAsyncTask.cancel(true);
+    }
+
     @Override
     public void onClick(View view) {
-        if(view.getId()==this.btnNew.getId()){}
+        if(view.getId()==this.btnNew.getId()){
+           this.startTimer();
+        }
         else if(view.getId()==this.btnExit.getId()){
             this.fl.changePage(1);
         }
