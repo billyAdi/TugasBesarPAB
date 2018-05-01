@@ -26,6 +26,8 @@ public class MainActivity extends AppCompatActivity
     protected DrawerLayout drawer;
     protected ActionBarDrawerToggle toggle;
 
+    protected Presenter presenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,9 +54,13 @@ public class MainActivity extends AppCompatActivity
         ft.add(R.id.fragment_container,this.mainMenuFragment);
         ft.commit();
 
+        this.presenter=new Presenter(this);
+
     }
 
-
+    public Presenter getPresenter(){
+        return this.presenter;
+    }
 
     @Override
     public void onBackPressed() {
