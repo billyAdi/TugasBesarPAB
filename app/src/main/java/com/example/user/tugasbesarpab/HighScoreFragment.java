@@ -36,4 +36,8 @@ public class HighScoreFragment extends Fragment {
 
         return view;
     }
+
+    public void updateListView(){
+        this.highScoreAdapter.setArray(((MainActivity) getActivity()).getPresenter().getHighScoreList());
+    }
 }

@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity
         this.fragmentManager=this.getSupportFragmentManager();
         FragmentTransaction ft=this.fragmentManager.beginTransaction();
         ft.add(R.id.fragment_container,this.mainMenuFragment);
+        ft.add(R.id.fragment_container,this.highScoreFragment);
+        ft.hide(this.highScoreFragment);
         ft.commit();
 
         this.presenter=new Presenter(this);
@@ -60,6 +62,10 @@ public class MainActivity extends AppCompatActivity
 
     public Presenter getPresenter(){
         return this.presenter;
+    }
+
+    public void updateListView(){
+       this.highScoreFragment.updateListView();
     }
 
     @Override
