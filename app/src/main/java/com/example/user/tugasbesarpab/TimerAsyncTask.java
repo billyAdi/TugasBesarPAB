@@ -23,7 +23,7 @@ public class TimerAsyncTask extends AsyncTask<Void,Integer,String> {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                break;
             }
 
             this.count++;

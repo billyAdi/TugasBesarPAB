@@ -90,6 +90,9 @@ public class MainActivity extends AppCompatActivity
         }
         else if(this.canvasFragment.isVisible()){
            this.changePage(1);
+           this.canvasFragment.stopTimer();
+           this.canvasFragment.resetCanvas();
+           this.canvasFragment.setTimeTv("00 : 00");
         }
         else {
             super.onBackPressed();

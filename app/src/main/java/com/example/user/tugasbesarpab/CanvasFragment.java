@@ -1,6 +1,10 @@
 package com.example.user.tugasbesarpab;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -22,6 +26,13 @@ public class CanvasFragment extends Fragment implements View.OnClickListener{
     protected Button btnNew,btnExit;
 
     protected TimerAsyncTask timerAsyncTask;
+
+    protected Canvas mCanvas;
+    protected Bitmap mBitmap;
+    protected Paint paint1,paint2;
+
+    private boolean isCanvasInitiated;
+    private boolean isTimerStarted;
 
     public CanvasFragment() {
     }
@@ -49,6 +60,11 @@ public class CanvasFragment extends Fragment implements View.OnClickListener{
 
         this.btnNew.setOnClickListener(this);
         this.btnExit.setOnClickListener(this);
+
+        this.isCanvasInitiated=false;
+        this.isTimerStarted=false;
+
+        this.setTimeTv("00 : 00");
         return view;
     }
 
@@ -65,16 +81,67 @@ public class CanvasFragment extends Fragment implements View.OnClickListener{
      * method ini dipanggil gamenya udh beres
      */
     public void stopTimer(){
-        this.timerAsyncTask.cancel(true);
+        if(this.isTimerStarted){
+            this.timerAsyncTask.cancel(true);
+            this.isTimerStarted=false;
+        }
     }
 
     @Override
     public void onClick(View view) {
+        this.setTimeTv("00 : 00");
         if(view.getId()==this.btnNew.getId()){
-           this.startTimer();
+            if(this.isCanvasInitiated==false){
+                this.isCanvasInitiated=true;
+                this.initializeCanvas();
+            }
+            this.resetCanvas();
+            this.draw();
+
+            if(this.isTimerStarted==false){
+                this.isTimerStarted=true;
+            }
+            else{
+                this.stopTimer();
+            }
+            this.startTimer();
+
         }
         else if(view.getId()==this.btnExit.getId()){
             this.fl.changePage(1);
+            this.resetCanvas();
+            this.stopTimer();
         }
+    }
+
+    public void initializeCanvas(){
+        this.mBitmap=Bitmap.createBitmap(this.ivCanvas.getWidth(),this.ivCanvas.getHeight(),Bitmap.Config.ARGB_8888);
+        this.ivCanvas.setImageBitmap(this.mBitmap);
+        this.mCanvas=new Canvas(this.mBitmap);
+
+        this.paint1=new Paint();
+        this.paint2=new Paint();
+
+        this.paint1.setStyle(Paint.Style.FILL);
+        this.paint2.setStyle(Paint.Style.FILL);
+
+        this.paint1.setColor(Color.BLACK);
+        this.paint2.setColor(Color.RED);
+
+    }
+
+    public void resetCanvas(){
+        if(this.isCanvasInitiated){
+            this.mCanvas.drawColor(Color.WHITE);
+            this.ivCanvas.invalidate();
+        }
+    }
+
+    public void draw(){
+        //draw 2 cirle (pertama kali draw), blm di random
+
+        this.mCanvas.drawCircle(50,50,15,this.paint1);
+        this.mCanvas.drawCircle(100,100,15,this.paint2);
+        this.ivCanvas.invalidate();
     }
 }
