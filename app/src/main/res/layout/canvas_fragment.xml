@@ -22,18 +22,28 @@
             android:layout_height="wrap_content"
             android:text="00 : 00"
             android:layout_weight="1"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            />
+        <Button
+            android:id="@+id/canvas_pause_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pause_btn_text"
+            android:layout_weight="1"
             />
         <Button
             android:id="@+id/canvas_btn_new"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/new_text"
+            android:layout_weight="1"
             />
         <Button
             android:id="@+id/canvas_btn_exit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/exit_title"
+            android:layout_weight="1"
             />
     </LinearLayout>
 </LinearLayout>
