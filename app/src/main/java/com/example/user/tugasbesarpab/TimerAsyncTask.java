@@ -11,9 +11,9 @@ public class TimerAsyncTask extends AsyncTask<Void,Integer,String> {
     private int count;
     protected CanvasFragment canvasFragment;
 
-    public TimerAsyncTask(CanvasFragment canvasFragment) {
+    public TimerAsyncTask(CanvasFragment canvasFragment,int count) {
         this.canvasFragment=canvasFragment;
-        this.count=0;
+        this.count=count;
     }
 
     @Override
@@ -36,6 +36,7 @@ public class TimerAsyncTask extends AsyncTask<Void,Integer,String> {
     @Override
     protected void onProgressUpdate(Integer... progress) {
         super.onProgressUpdate(progress);
+        this.canvasFragment.setCount(this.count);
 
         int minutes=this.count/60;
         int secondes=this.count%60;

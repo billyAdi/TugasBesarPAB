@@ -51,7 +51,13 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
     private float azimuth,pitch,roll;
 
+    private int count;
+
     public CanvasFragment() {
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 
     @Override
@@ -106,7 +112,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     }
 
     public void startTimer(){
-        this.timerAsyncTask=new TimerAsyncTask(this);
+        this.timerAsyncTask=new TimerAsyncTask(this,this.count);
         this.timerAsyncTask.execute();
     }
 
@@ -136,6 +142,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.azimuth=0;
         this.mAx=0;
         this.mAy=0;
+        this.count=0;
 
         mSensorManager.registerListener(this, mAccelerometer, (int) mDelay);
 
@@ -217,16 +224,21 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
             this.btnPause.setText("PAUSE"); */
            this.resetFragment();
+           this.count=0;
         }
         else if(view.getId()==this.btnPause.getId()){
             if(this.status==false){
                 mSensorManager.unregisterListener(this);
                 this.btnPause.setText("RESUME");
+                this.stopTimer();
                 this.status=true;
+                System.out.println(this.count);
             }
             else{
                 mSensorManager.registerListener(this, mAccelerometer, (int) mDelay);
                 this.btnPause.setText("PAUSE");
+                this.startTimer();
+                this.isTimerStarted=true;
                 this.status=false;
             }
 
