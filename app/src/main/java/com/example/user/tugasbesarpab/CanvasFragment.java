@@ -42,7 +42,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
     private float mAx;
     private float mAy;
-    private final float mDelay = 10.9f;
+    private final float mDelay = 2f;
 
     private boolean isCanvasInitiated;
     private boolean isTimerStarted;
@@ -136,9 +136,13 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         }
         else if(view.getId()==this.btnPause.getId()){
             if(this.status==false){
+                mSensorManager.unregisterListener(this);
+
                 this.status=true;
             }
             else{
+                mSensorManager.registerListener(this, mAccelerometer, (int) mDelay);
+
                 this.status=false;
             }
 
@@ -188,23 +192,23 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     public void redraw(){
         if(this.isCanvasInitiated){
             this.resetCanvas();
-        this.posisi[0][0]=(int)(this.posisi[0][0]-(this.mAx));
-        this.posisi[0][1]=(int)(this.posisi[0][1]-(this.mAy));
-        if(this.posisi[0][0]<0){
-            this.posisi[0][0]=1;
-        }
-        else if(this.posisi[0][0]>ivCanvas.getWidth()){
-            this.posisi[0][0]=ivCanvas.getWidth()-1;
-        }
+            this.posisi[0][0]=(int)(this.posisi[0][0]-(this.mAx));
+            this.posisi[0][1]=(int)(this.posisi[0][1]-(this.mAy));
+            if(this.posisi[0][0]<0){
+                this.posisi[0][0]=1;
+            }
+            else if(this.posisi[0][0]>ivCanvas.getWidth()){
+                this.posisi[0][0]=ivCanvas.getWidth()-1;
+            }
             if(this.posisi[0][1]<0){
                 this.posisi[0][1]=1;
             }
             else if(this.posisi[0][1]>ivCanvas.getHeight()){
                 this.posisi[0][1]=ivCanvas.getHeight()-1;
             }
-        this.mCanvas.drawCircle( this.posisi[0][0],this.posisi[0][1],10,this.paint1);
-        this.mCanvas.drawCircle(this.posisi[1][0],this.posisi[1][1],15,this.paint2);
-        this.ivCanvas.invalidate();
+            this.mCanvas.drawCircle( this.posisi[0][0],this.posisi[0][1],10,this.paint1);
+            this.mCanvas.drawCircle(this.posisi[1][0],this.posisi[1][1],15,this.paint2);
+            this.ivCanvas.invalidate();
         }
 
 
