@@ -137,12 +137,12 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         else if(view.getId()==this.btnPause.getId()){
             if(this.status==false){
                 mSensorManager.unregisterListener(this);
-
+                this.btnPause.setText("RESUME");
                 this.status=true;
             }
             else{
                 mSensorManager.registerListener(this, mAccelerometer, (int) mDelay);
-
+                this.btnPause.setText("PAUSE");
                 this.status=false;
             }
 
