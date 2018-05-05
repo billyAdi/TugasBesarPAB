@@ -6,4 +6,5 @@ package com.example.user.tugasbesarpab;
 
 public interface FragmentListener {
     void changePage(int i);
+    void resetCanvasFragment();
 }

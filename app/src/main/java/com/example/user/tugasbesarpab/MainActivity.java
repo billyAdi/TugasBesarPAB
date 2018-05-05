@@ -91,8 +91,6 @@ public class MainActivity extends AppCompatActivity
         else if(this.canvasFragment.isVisible()){
            this.changePage(1);
            this.canvasFragment.stopTimer();
-           this.canvasFragment.resetCanvas();
-           this.canvasFragment.setTimeTv("00 : 00");
         }
         else {
             super.onBackPressed();
@@ -173,16 +171,23 @@ public class MainActivity extends AppCompatActivity
             this.setDrawerState(true);
         }
         else if(i==2){
-            if(this.canvasFragment.isAdded()){
-                ft.show(this.canvasFragment);
-            }
-            else{
-                ft.add(R.id.fragment_container,this.canvasFragment);
-            }
+
+            ft.remove(this.canvasFragment);
+            this.canvasFragment=CanvasFragment.newInstance();
+            ft.add(R.id.fragment_container,this.canvasFragment);
             ft.hide(this.mainMenuFragment);
             ft.commit();
             this.setDrawerState(false);
         }
 
+    }
+
+    @Override
+    public void resetCanvasFragment() {
+        FragmentTransaction ft=this.fragmentManager.beginTransaction();
+        ft.remove(this.canvasFragment);
+        this.canvasFragment=CanvasFragment.newInstance();
+        ft.add(R.id.fragment_container,this.canvasFragment);
+        ft.commit();
     }
 }
