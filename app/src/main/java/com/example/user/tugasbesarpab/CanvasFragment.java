@@ -5,6 +5,10 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,22 +18,31 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import static android.content.Context.SENSOR_SERVICE;
+
 /**
  * Created by user on 4/30/2018.
  */
 
-public class CanvasFragment extends Fragment implements View.OnClickListener{
+public class CanvasFragment extends Fragment implements View.OnClickListener,SensorEventListener {
     protected FragmentListener fl;
 
     protected ImageView ivCanvas;
     protected TextView timeTv;
     protected Button btnNew,btnExit;
-
+    private int[][] posisi;
     protected TimerAsyncTask timerAsyncTask;
+
+    private SensorManager mSensorManager;
+    private Sensor mAccelerometer;
 
     protected Canvas mCanvas;
     protected Bitmap mBitmap;
     protected Paint paint1,paint2;
+
+    private float mAx;
+    private float mAy;
+    private final float mDelay = 10.9f;
 
     private boolean isCanvasInitiated;
     private boolean isTimerStarted;
@@ -52,11 +65,15 @@ public class CanvasFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public View onCreateView(LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
+        this.posisi=new int[2][2];
         View view=inflater.inflate(R.layout.canvas_fragment,container,false);
         this.timeTv=view.findViewById(R.id.time_tv);
         this.ivCanvas=view.findViewById(R.id.iv_canvas);
         this.btnNew=view.findViewById(R.id.canvas_btn_new);
         this.btnExit=view.findViewById(R.id.canvas_btn_exit);
+
+        mSensorManager = (SensorManager)getActivity().getSystemService(SENSOR_SERVICE);
+        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         this.btnNew.setOnClickListener(this);
         this.btnExit.setOnClickListener(this);
@@ -98,6 +115,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener{
             this.resetCanvas();
             this.draw();
 
+
             if(this.isTimerStarted==false){
                 this.isTimerStarted=true;
             }
@@ -109,6 +127,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener{
         }
         else if(view.getId()==this.btnExit.getId()){
             this.fl.changePage(1);
+            this.isCanvasInitiated=false;
             this.resetCanvas();
             this.stopTimer();
         }
@@ -140,8 +159,69 @@ public class CanvasFragment extends Fragment implements View.OnClickListener{
     public void draw(){
         //draw 2 cirle (pertama kali draw), blm di random
 
-        this.mCanvas.drawCircle(50,50,15,this.paint1);
-        this.mCanvas.drawCircle(100,100,15,this.paint2);
+        int posX = (int)(Math.random() * ivCanvas.getWidth());
+        int posY = (int)(Math.random() * ivCanvas.getHeight());
+        posisi[0][0]=posX;
+        posisi[0][1]=posY;
+
+        this.mCanvas.drawCircle(posX,posY,10,this.paint1);
+        posX = (int)(Math.random() * ivCanvas.getWidth());
+        posY = (int)(Math.random() * ivCanvas.getHeight());
+        posisi[1][0]=posX;
+        posisi[1][1]=posY;
+        this.mCanvas.drawCircle(posX,posY,15,this.paint2);
         this.ivCanvas.invalidate();
+    }
+
+    public void redraw(){
+        if(this.isCanvasInitiated){
+            this.resetCanvas();
+        this.posisi[0][0]=(int)(this.posisi[0][0]-(this.mAx));
+        this.posisi[0][1]=(int)(this.posisi[0][1]-(this.mAy));
+        if(this.posisi[0][0]<0){
+            this.posisi[0][0]=1;
+        }
+        else if(this.posisi[0][0]>ivCanvas.getWidth()){
+            this.posisi[0][0]=ivCanvas.getWidth()-1;
+        }
+            if(this.posisi[0][1]<0){
+                this.posisi[0][1]=1;
+            }
+            else if(this.posisi[0][1]>ivCanvas.getHeight()){
+                this.posisi[0][1]=ivCanvas.getHeight()-1;
+            }
+        this.mCanvas.drawCircle( this.posisi[0][0],this.posisi[0][1],10,this.paint1);
+        this.mCanvas.drawCircle(this.posisi[1][0],this.posisi[1][1],15,this.paint2);
+        this.ivCanvas.invalidate();
+        }
+
+
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        mSensorManager.registerListener(this, mAccelerometer, (int) mDelay);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mSensorManager.unregisterListener(this);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        mAx = mAx-sensorEvent.values[0];
+        mAy = mAy-sensorEvent.values[1];
+
+        mAx = Math.signum(mAx) * Math.abs(mAx);
+        mAy = Math.signum(mAy) * Math.abs(mAy);
+        redraw();
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
     }
 }
