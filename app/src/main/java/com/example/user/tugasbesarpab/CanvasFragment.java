@@ -47,6 +47,9 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     private boolean isCanvasInitiated;
     private boolean isTimerStarted;
     private boolean status;
+    private boolean isSet;
+
+    private float azimuth,pitch,roll;
 
     public CanvasFragment() {
     }
@@ -66,7 +69,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
     @Override
     public View onCreateView(LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
-        this.posisi=new int[2][2];
+
         View view=inflater.inflate(R.layout.canvas_fragment,container,false);
         this.timeTv=view.findViewById(R.id.time_tv);
         this.ivCanvas=view.findViewById(R.id.iv_canvas);
@@ -80,9 +83,19 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.btnExit.setOnClickListener(this);
         this.btnPause.setOnClickListener(this);
 
+
         this.isCanvasInitiated=false;
         this.isTimerStarted=false;
         this.status=false;
+        this.isSet=false;
+
+        this.posisi=new int[2][2];
+
+        this.pitch=0;
+        this.roll=0;
+        this.azimuth=0;
+        this.mAx=0;
+        this.mAy=0;
 
         this.setTimeTv("00 : 00");
         return view;
@@ -107,11 +120,34 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         }
     }
 
+    public void resetFragment(){
+        this.stopTimer();
+        this.resetCanvas();
+
+        this.isCanvasInitiated=false;
+        this.isTimerStarted=false;
+        this.status=false;
+        this.isSet=false;
+
+        this.posisi=new int[2][2];
+
+        this.pitch=0;
+        this.roll=0;
+        this.azimuth=0;
+        this.mAx=0;
+        this.mAy=0;
+
+        mSensorManager.registerListener(this, mAccelerometer, (int) mDelay);
+
+        this.btnPause.setText("PAUSE");
+    }
+
     @Override
     public void onClick(View view) {
-        this.setTimeTv("00 : 00");
+
         if(view.getId()==this.btnNew.getId()){
-            if(this.isCanvasInitiated==false){
+            this.setTimeTv("00 : 00");
+           /** if(this.isCanvasInitiated==false){
                 this.isCanvasInitiated=true;
                 this.initializeCanvas();
             }
@@ -126,13 +162,61 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
                 this.stopTimer();
             }
             this.startTimer();
+            */
+           /**
+            this.stopTimer();
+            this.resetCanvas();
+
+            this.isCanvasInitiated=false;
+            this.isTimerStarted=false;
+            this.status=false;
+            this.isSet=false;
+
+            this.posisi=new int[2][2];
+
+            this.pitch=0;
+            this.roll=0;
+            this.azimuth=0;
+            this.mAx=0;
+            this.mAy=0;
+
+            mSensorManager.registerListener(this, mAccelerometer, (int) mDelay);
+
+            this.btnPause.setText("PAUSE");
+        */
+            this.resetFragment();
+
+            this.initializeCanvas();
+            this.draw();
+            this.startTimer();
+
+            this.isTimerStarted=true;
+            this.isCanvasInitiated=true;
 
         }
         else if(view.getId()==this.btnExit.getId()){
+
             this.fl.changePage(1);
-            this.isCanvasInitiated=false;
+           /** this.stopTimer();
             this.resetCanvas();
-            this.stopTimer();
+
+            this.isCanvasInitiated=false;
+            this.isTimerStarted=false;
+            this.status=false;
+            this.isSet=false;
+
+            this.posisi=new int[2][2];
+
+            this.pitch=0;
+            this.roll=0;
+            this.azimuth=0;
+            this.mAx=0;
+            this.mAy=0;
+
+            mSensorManager.registerListener(this, mAccelerometer, (int) mDelay);
+
+            this.btnPause.setText("PAUSE"); */
+           this.resetFragment();
         }
         else if(view.getId()==this.btnPause.getId()){
             if(this.status==false){
@@ -173,7 +257,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     }
 
     public void draw(){
-        //draw 2 cirle (pertama kali draw), blm di random
+
 
         int posX = (int)(Math.random() * ivCanvas.getWidth());
         int posY = (int)(Math.random() * ivCanvas.getHeight());
@@ -189,11 +273,11 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.ivCanvas.invalidate();
     }
 
-    public void redraw(){
+    public void redraw(int posxS,int posyS){
         if(this.isCanvasInitiated){
             this.resetCanvas();
-            this.posisi[0][0]=(int)(this.posisi[0][0]-(this.mAx));
-            this.posisi[0][1]=(int)(this.posisi[0][1]-(this.mAy));
+            this.posisi[0][0]=(int)(this.posisi[0][0]+(posxS));
+            this.posisi[0][1]=(int)(this.posisi[0][1]-(posyS));
             if(this.posisi[0][0]<0){
                 this.posisi[0][0]=1;
             }
@@ -227,12 +311,20 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        mAx = sensorEvent.values[0];
-        mAy = sensorEvent.values[1];
+        if(!this.isSet){
+            this.isSet=true;
+            this.roll=sensorEvent.values[0];
+            this.pitch=sensorEvent.values[1];
+        }
+        float bedaX=this.roll-sensorEvent.values[0];
+        float bedaY=this.pitch-sensorEvent.values[1];
+
+        mAx = bedaX;
+        mAy = bedaY;
 
         mAx = Math.signum(mAx) * Math.abs(mAx);
         mAy = Math.signum(mAy) * Math.abs(mAy);
-        redraw();
+        redraw((int)mAx  ,(int)mAy);
 
     }
 
