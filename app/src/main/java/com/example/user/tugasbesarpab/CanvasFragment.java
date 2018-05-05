@@ -211,8 +211,8 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        mAx = mAx-sensorEvent.values[0];
-        mAy = mAy-sensorEvent.values[1];
+        mAx = sensorEvent.values[0];
+        mAy = sensorEvent.values[1];
 
         mAx = Math.signum(mAx) * Math.abs(mAx);
         mAy = Math.signum(mAy) * Math.abs(mAy);
