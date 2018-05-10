@@ -31,7 +31,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
     protected ImageView ivCanvas;
     protected TextView timeTv;
-    protected Button btnNew,btnPause;
+    protected Button btnNew,btnPause,btnStop;
     private ArrayList<Lingkaran> obj;
     protected TimerAsyncTask timerAsyncTask;
 
@@ -91,6 +91,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.ivCanvas=view.findViewById(R.id.iv_canvas);
         this.btnNew=view.findViewById(R.id.canvas_btn_new);
         this.btnPause=view.findViewById(R.id.canvas_pause_btn);
+        this.btnStop=view.findViewById(R.id.canvas_btn_stop);
         mSensorManager = (SensorManager)getActivity().getSystemService(SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
@@ -98,7 +99,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
         this.btnNew.setOnClickListener(this);
         this.btnPause.setOnClickListener(this);
-
+        this.btnStop.setOnClickListener(this);
 
         this.isCanvasInitiated=false;
         this.isTimerStarted=false;
@@ -126,9 +127,11 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     public void endGame(){
         this.stopTimer();
         this.isFinished=true;
+        mSensorManager.unregisterListener(this);
         int score=((MainActivity)getActivity()).presenter.getScore(this.count);
 
-        //((MainActivity)getActivity()).presenter.addNewScore(score);
+        System.out.println(score);
+        ((MainActivity)getActivity()).presenter.addNewScore(score);
 
         //abis itu munculin pop up , buat kasih tau score
     }
@@ -201,7 +204,9 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
                 this.status=false;
             }
 
+
         }
+       
     }
 
     public void initializeCanvas(){
@@ -259,7 +264,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
                 temp = ivCanvas.getWidth()-radius1;
             }
             this.obj.get(0).setPosX(temp);
-            System.out.println(temp);
+            //System.out.println(temp);
             temp = this.obj.get(0).getPosY()+this.obj.get(0).getSpeedY();
             if(temp<radius1){
                 this.obj.get(0).setSpeedY(this.obj.get(0).getSpeedY()/2);
@@ -268,7 +273,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
                 this.obj.get(0).setSpeedY(this.obj.get(0).getSpeedY()/2);
                 temp = ivCanvas.getHeight()-radius1;
             }
-            System.out.println(temp);
+            //System.out.println(temp);
             this.obj.get(0).setPosY(temp);
 
 
