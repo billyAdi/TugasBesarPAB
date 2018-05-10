@@ -33,7 +33,6 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     protected TextView timeTv;
     protected Button btnNew,btnPause;
     private ArrayList<Lingkaran> obj;
-    private int[][] posisi;
     protected TimerAsyncTask timerAsyncTask;
 
     
@@ -105,7 +104,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.status=false;
         this.isSet=false;
 
-        this.posisi=new int[2][2];
+
 
         this.pitch=0;
         this.roll=0;
@@ -144,7 +143,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.status=false;
         this.isSet=false;
         this.obj=new ArrayList<Lingkaran>();
-        this.posisi=new int[2][2];
+
 
         this.pitch=0;
         this.roll=0;
@@ -162,43 +161,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
         if(view.getId()==this.btnNew.getId()){
             this.setTimeTv("00 : 00");
-           /** if(this.isCanvasInitiated==false){
-                this.isCanvasInitiated=true;
-                this.initializeCanvas();
-            }
-            this.resetCanvas();
-            this.draw();
 
-
-            if(this.isTimerStarted==false){
-                this.isTimerStarted=true;
-            }
-            else{
-                this.stopTimer();
-            }
-            this.startTimer();
-            */
-           /**
-            this.stopTimer();
-            this.resetCanvas();
-
-            this.isCanvasInitiated=false;
-            this.isTimerStarted=false;
-            this.status=false;
-            this.isSet=false;
-
-            this.posisi=new int[2][2];
-
-            this.pitch=0;
-            this.roll=0;
-            this.azimuth=0;
-            this.mAx=0;
-            this.mAy=0;
-
-            mSensorManager.registerListener(this, mAccelerometer, (int) mDelay);
-
-            this.btnPause.setText("PAUSE");
-        */
             this.resetFragment();
 
             this.initializeCanvas();
@@ -210,6 +173,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
         }
         else if(view.getId()==this.btnPause.getId()){
+            //klo gamenya udh beres, hrsnya button ga bisa di klik
             if(this.status==false&&this.isCanvasInitiated){
                 mSensorManager.unregisterListener(this);
                 this.btnPause.setText("RESUME");
@@ -257,12 +221,9 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     }
 
     public void draw(){
-
-
-
-
-        this.mCanvas.drawCircle(obj.get(0).getPosX(),obj.get(0).getPosY(),obj.get(0).getRad(),this.paint1);
         this.mCanvas.drawCircle(obj.get(1).getPosX(),obj.get(1).getPosY(),obj.get(1).getRad(),this.paint2);
+        this.mCanvas.drawCircle(obj.get(0).getPosX(),obj.get(0).getPosY(),obj.get(0).getRad(),this.paint1);
+
         this.ivCanvas.invalidate();
     }
 
@@ -306,6 +267,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         super.onResume();
     }
 
+    //blm menangani , klo misal game nya udh beres
     @Override
     public void onPause() {
         super.onPause();
