@@ -38,6 +38,8 @@ public class HighScoreFragment extends Fragment {
     }
 
     public void updateListView(){
-        this.highScoreAdapter.setArray(((MainActivity) getActivity()).getPresenter().getHighScoreList());
+        if(highScoreAdapter!=null) {
+            this.highScoreAdapter.setArray(((MainActivity) getActivity()).getPresenter().getHighScoreList());
+        }
     }
 }
