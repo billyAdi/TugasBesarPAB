@@ -46,7 +46,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
     private float mAx;
     private float mAy;
-    private final float mDelay = 2f;
+    private final float mDelay = 10f;
 
     private int radius1,radius2;
 
@@ -54,6 +54,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     private boolean isTimerStarted;
     private boolean status;
     private boolean isSet;
+    private boolean isFinished;
 
     private float pitch,roll;
 
@@ -103,7 +104,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.isTimerStarted=false;
         this.status=false;
         this.isSet=false;
-
+        this.isFinished=false;
 
 
         this.pitch=0;
@@ -119,14 +120,25 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.timeTv.setText(time);
     }
 
+    /**
+     * panggil method ini klo udh beres gamenya
+     */
+    public void endGame(){
+        this.stopTimer();
+        this.isFinished=true;
+        int score=((MainActivity)getActivity()).presenter.getScore(this.count);
+
+        //((MainActivity)getActivity()).presenter.addNewScore(score);
+
+        //abis itu munculin pop up , buat kasih tau score
+    }
+
     public void startTimer(){
         this.timerAsyncTask=new TimerAsyncTask(this,this.count);
         this.timerAsyncTask.execute();
     }
 
-    /**
-     * method ini dipanggil gamenya udh beres
-     */
+
     public void stopTimer(){
         if(this.isTimerStarted){
             this.timerAsyncTask.cancel(true);
@@ -142,6 +154,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.isTimerStarted=false;
         this.status=false;
         this.isSet=false;
+        this.isFinished=false;
         this.obj=new ArrayList<Lingkaran>();
 
 
@@ -173,8 +186,8 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
         }
         else if(view.getId()==this.btnPause.getId()){
-            //klo gamenya udh beres, hrsnya button ga bisa di klik
-            if(this.status==false&&this.isCanvasInitiated){
+
+            if(this.status==false&&this.isCanvasInitiated&&this.isFinished==false){
                 mSensorManager.unregisterListener(this);
                 this.btnPause.setText("RESUME");
                 this.stopTimer();
@@ -221,43 +234,10 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     }
 
     public void draw(){
-        
-
-
         this.mCanvas.drawCircle(obj.get(1).getPosX(),obj.get(1).getPosY(),obj.get(1).getRad(),this.paint2);
         this.mCanvas.drawCircle(obj.get(0).getPosX(),obj.get(0).getPosY(),obj.get(0).getRad(),this.paint1);
 
 
-        if(obj.get(0).getPosX()+radius1<=obj.get(1).getPosX()-radius2){
-            if(obj.get(0).getPosY()+radius1>obj.get(1).getPosY()-radius2||obj.get(0).getPosY()-radius1<=obj.get(1).getPosY()+radius2){
-
-                mSensorManager.unregisterListener(this);
-                this.stopTimer();
-
-                if(this.status==false&&this.isCanvasInitiated){
-                    this.btnPause.setText("RESUME");
-                    this.status=true;
-                }this.onPause();
-                System.out.println("Pos X "+(obj.get(0).getPosX()+radius1)+" "+(obj.get(1).getPosX()-radius2));
-                System.out.println("Pos Y "+(obj.get(0).getPosY()+radius1)+" "+(obj.get(1).getPosY()-radius2));
-                System.out.println("Collided");
-            }
-        }
-        else if(obj.get(0).getPosX()-radius1>=obj.get(1).getPosX()+radius2) {
-            if(obj.get(0).getPosY()+radius1<=obj.get(1).getPosY()-radius2||obj.get(0).getPosY()-radius1>obj.get(1).getPosY()+radius2){
-
-                mSensorManager.unregisterListener(this);
-                this.stopTimer();
-
-                if(this.status==false&&this.isCanvasInitiated){
-                    this.btnPause.setText("RESUME");
-                    this.status=true;
-                }
-                System.out.println("Pos X "+(obj.get(0).getPosX()+radius1)+" "+(obj.get(1).getPosX()-radius2));
-                System.out.println("Pos Y "+(obj.get(0).getPosY()+radius1)+" "+(obj.get(1).getPosY()-radius2));
-                System.out.println("Collided");
-            }
-        }
         this.ivCanvas.invalidate();
 
     }
@@ -302,17 +282,20 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         super.onResume();
     }
 
-    //blm menangani , klo misal game nya udh beres
+
     @Override
     public void onPause() {
         super.onPause();
         mSensorManager.unregisterListener(this);
-        this.stopTimer();
+        if(this.isFinished==false){
+            this.stopTimer();
 
-        if(this.status==false&&this.isCanvasInitiated){
-            this.btnPause.setText("RESUME");
-            this.status=true;
+            if(this.status==false&&this.isCanvasInitiated){
+                this.btnPause.setText("RESUME");
+                this.status=true;
+            }
         }
+
     }
 
     @Override

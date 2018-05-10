@@ -1,5 +1,7 @@
 package com.example.user.tugasbesarpab;
 
+import android.text.method.HideReturnsTransformationMethod;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -23,11 +25,13 @@ import java.util.Map;
 public class Presenter {
     private MainActivity ui;
     protected ArrayList<Integer> highScoreArrayList;
+    private PenghitungScore penghitungScore;
 
     public Presenter(MainActivity ui) {
         this.ui = ui;
         this.highScoreArrayList=new ArrayList<Integer>();
         this.getHighScoreFromWebService(1);
+        this.penghitungScore=new PenghitungScore();
 
     }
 
@@ -51,8 +55,8 @@ public class Presenter {
 
     public void addNewScore(int score){
         //dipanggil pas udh beres game
-        //setelah itu panggil method updateHighScoreArray dari main menu fragment
         this.highScoreArrayList.add(score);
+        this.updateHighScoreArray();
     }
 
     public void getHighScoreFromWebService(final int page){
@@ -128,6 +132,10 @@ public class Presenter {
             queue.add(stringRequest);
         }
 
+    }
+
+    public int getScore(int count){
+        return this.penghitungScore.getScore(count);
     }
 
 
