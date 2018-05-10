@@ -206,8 +206,8 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.paint2.setColor(Color.RED);
         radius1=10;
         radius2=15;
-        this.obj.add(new Lingkaran(radius1+(int)(Math.random() * (ivCanvas.getWidth()-radius1)),radius1+(int)(Math.random() * (ivCanvas.getHeight()-radius1)),radius1));
-        this.obj.add(new Lingkaran(radius2+(int)(Math.random() * (ivCanvas.getWidth()-radius2)),radius2+(int)(Math.random() * (ivCanvas.getHeight()-radius2)),radius2));
+        this.obj.add(new Lingkaran(radius1+(int)(Math.random() * (ivCanvas.getWidth()-2*radius1)),radius1+(int)(Math.random() * (ivCanvas.getHeight()-2*radius1)),radius1));
+        this.obj.add(new Lingkaran(radius2+(int)(Math.random() * (ivCanvas.getWidth()-2*radius2)),radius2+(int)(Math.random() * (ivCanvas.getHeight()-2*radius2)),radius2));
 
 
 
@@ -221,10 +221,45 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     }
 
     public void draw(){
+        
+
+
         this.mCanvas.drawCircle(obj.get(1).getPosX(),obj.get(1).getPosY(),obj.get(1).getRad(),this.paint2);
         this.mCanvas.drawCircle(obj.get(0).getPosX(),obj.get(0).getPosY(),obj.get(0).getRad(),this.paint1);
 
+
+        if(obj.get(0).getPosX()+radius1<=obj.get(1).getPosX()-radius2){
+            if(obj.get(0).getPosY()+radius1>obj.get(1).getPosY()-radius2||obj.get(0).getPosY()-radius1<=obj.get(1).getPosY()+radius2){
+
+                mSensorManager.unregisterListener(this);
+                this.stopTimer();
+
+                if(this.status==false&&this.isCanvasInitiated){
+                    this.btnPause.setText("RESUME");
+                    this.status=true;
+                }this.onPause();
+                System.out.println("Pos X "+(obj.get(0).getPosX()+radius1)+" "+(obj.get(1).getPosX()-radius2));
+                System.out.println("Pos Y "+(obj.get(0).getPosY()+radius1)+" "+(obj.get(1).getPosY()-radius2));
+                System.out.println("Collided");
+            }
+        }
+        else if(obj.get(0).getPosX()-radius1>=obj.get(1).getPosX()+radius2) {
+            if(obj.get(0).getPosY()+radius1<=obj.get(1).getPosY()-radius2||obj.get(0).getPosY()-radius1>obj.get(1).getPosY()+radius2){
+
+                mSensorManager.unregisterListener(this);
+                this.stopTimer();
+
+                if(this.status==false&&this.isCanvasInitiated){
+                    this.btnPause.setText("RESUME");
+                    this.status=true;
+                }
+                System.out.println("Pos X "+(obj.get(0).getPosX()+radius1)+" "+(obj.get(1).getPosX()-radius2));
+                System.out.println("Pos Y "+(obj.get(0).getPosY()+radius1)+" "+(obj.get(1).getPosY()-radius2));
+                System.out.println("Collided");
+            }
+        }
         this.ivCanvas.invalidate();
+
     }
 
     public void redraw(int posxS,int posyS){
