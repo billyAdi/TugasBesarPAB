@@ -250,11 +250,20 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
             this.ivCanvas.invalidate();
         }
     }
+    
+    public boolean cekCollide(){
+        double xDif = obj.get(0).getPosX() - obj.get(1).getPosX();
+        double yDif = obj.get(0).getPosY() - obj.get(1).getPosY();
+        double distanceSquared = xDif * xDif + yDif * yDif;
+        return distanceSquared < (radius1 + radius2) * (radius1 + radius2);   
+    }
 
     public void draw(){
         this.mCanvas.drawCircle(obj.get(1).getPosX(),obj.get(1).getPosY(),obj.get(1).getRad(),this.paint2);
         this.mCanvas.drawCircle(obj.get(0).getPosX(),obj.get(0).getPosY(),obj.get(0).getRad(),this.paint1);
-
+        if(this.cekcCollide(){
+            endGame();   
+        }
 
         this.ivCanvas.invalidate();
 
