@@ -29,7 +29,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
     protected ImageView ivCanvas;
     protected TextView timeTv;
-    protected Button btnNew,btnExit,btnPause;
+    protected Button btnNew,btnPause;
     private int[][] posisi;
     protected TimerAsyncTask timerAsyncTask;
 
@@ -49,7 +49,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     private boolean status;
     private boolean isSet;
 
-    private float azimuth,pitch,roll;
+    private float pitch,roll;
 
     private int count;
 
@@ -80,13 +80,11 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.timeTv=view.findViewById(R.id.time_tv);
         this.ivCanvas=view.findViewById(R.id.iv_canvas);
         this.btnNew=view.findViewById(R.id.canvas_btn_new);
-        this.btnExit=view.findViewById(R.id.canvas_btn_exit);
         this.btnPause=view.findViewById(R.id.canvas_pause_btn);
         mSensorManager = (SensorManager)getActivity().getSystemService(SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         this.btnNew.setOnClickListener(this);
-        this.btnExit.setOnClickListener(this);
         this.btnPause.setOnClickListener(this);
 
 
@@ -99,7 +97,6 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
         this.pitch=0;
         this.roll=0;
-        this.azimuth=0;
         this.mAx=0;
         this.mAy=0;
 
@@ -139,7 +136,6 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
         this.pitch=0;
         this.roll=0;
-        this.azimuth=0;
         this.mAx=0;
         this.mAy=0;
         this.count=0;
@@ -201,31 +197,6 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
             this.isCanvasInitiated=true;
 
         }
-        else if(view.getId()==this.btnExit.getId()){
-
-            this.fl.changePage(1);
-           /** this.stopTimer();
-            this.resetCanvas();
-
-            this.isCanvasInitiated=false;
-            this.isTimerStarted=false;
-            this.status=false;
-            this.isSet=false;
-
-            this.posisi=new int[2][2];
-
-            this.pitch=0;
-            this.roll=0;
-            this.azimuth=0;
-            this.mAx=0;
-            this.mAy=0;
-
-            mSensorManager.registerListener(this, mAccelerometer, (int) mDelay);
-
-            this.btnPause.setText("PAUSE"); */
-           this.resetFragment();
-           this.count=0;
-        }
         else if(view.getId()==this.btnPause.getId()){
             if(this.status==false){
                 mSensorManager.unregisterListener(this);
@@ -234,7 +205,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
                 this.status=true;
                 System.out.println(this.count);
             }
-            else{
+            else {
                 mSensorManager.registerListener(this, mAccelerometer, (int) mDelay);
                 this.btnPause.setText("PAUSE");
                 this.startTimer();
