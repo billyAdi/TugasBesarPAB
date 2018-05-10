@@ -1,6 +1,7 @@
 package com.example.user.tugasbesarpab;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -11,6 +12,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,13 +33,9 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
     protected ImageView ivCanvas;
     protected TextView timeTv;
-    protected Button btnNew,btnPause,btnStop;
+    protected Button btnNew,btnPause;
     private ArrayList<Lingkaran> obj;
     protected TimerAsyncTask timerAsyncTask;
-
-        PopupWindow popUpWindow;
-    LinearLayout containerLayout;
-    Button btnClose;
 
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
@@ -93,30 +91,16 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.ivCanvas=view.findViewById(R.id.iv_canvas);
         this.btnNew=view.findViewById(R.id.canvas_btn_new);
         this.btnPause=view.findViewById(R.id.canvas_pause_btn);
-        this.btnStop=view.findViewById(R.id.canvas_btn_stop);
+
         mSensorManager = (SensorManager)getActivity().getSystemService(SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
-        mSensorManager.registerListener(this, mAccelerometer, (int) mDelay
+        mSensorManager.registerListener(this, mAccelerometer, (int) mDelay);
                    
-                                        containerLayout = new LinearLayout(this);
 
-        popUpWindow = new PopupWindow(this);
- btnClose= new Button(this);
-        btnClose.setOnClickListener(this);
-
-        btnClose.setText("X");
-
-        layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        containerLayout.addView(btnClose, layoutParams);
-        popUpWindow.setContentView(containerLayout);
-        
-       
-        containerLayout.setOrientation(LinearLayout.VERTICAL);
         this.btnNew.setOnClickListener(this);
         this.btnPause.setOnClickListener(this);
-        this.btnStop.setOnClickListener(this);
+
 
         this.isCanvasInitiated=false;
         this.isTimerStarted=false;
@@ -131,6 +115,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.mAy=0;
 
         this.setTimeTv("00 : 00");
+
         return view;
     }
 
@@ -146,11 +131,20 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.isFinished=true;
         mSensorManager.unregisterListener(this);
         int score=((MainActivity)getActivity()).presenter.getScore(this.count);
-            popUpWindow.showAtLocation(getWindow().getDecorView().getRootView(), Gravity.BOTTOM, 10, 10);
-        btnClose.setText(""+score);
+
 
         System.out.println(score);
         ((MainActivity)getActivity()).presenter.addNewScore(score);
+
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+        alertDialog.setMessage("Permainan selesai. Score akhir: "+score);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
 
         //abis itu munculin pop up , buat kasih tau score
     }
@@ -206,9 +200,6 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
             this.isTimerStarted=true;
             this.isCanvasInitiated=true;
 
-        }
-        else if(v.getId()==this.btnClose.getId()){
-            popUpWindow.dismiss();
         }
         else if(view.getId()==this.btnPause.getId()){
 
