@@ -84,6 +84,8 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         mSensorManager = (SensorManager)getActivity().getSystemService(SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
+        mSensorManager.registerListener(this, mAccelerometer, (int) mDelay);
+
         this.btnNew.setOnClickListener(this);
         this.btnPause.setOnClickListener(this);
 
@@ -198,14 +200,13 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
         }
         else if(view.getId()==this.btnPause.getId()){
-            if(this.status==false){
+            if(this.status==false&&this.isCanvasInitiated){
                 mSensorManager.unregisterListener(this);
                 this.btnPause.setText("RESUME");
                 this.stopTimer();
                 this.status=true;
-                System.out.println(this.count);
             }
-            else {
+            else if(this.status==true){
                 mSensorManager.registerListener(this, mAccelerometer, (int) mDelay);
                 this.btnPause.setText("PAUSE");
                 this.startTimer();
@@ -283,13 +284,18 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     @Override
     public void onResume() {
         super.onResume();
-        mSensorManager.registerListener(this, mAccelerometer, (int) mDelay);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         mSensorManager.unregisterListener(this);
+        this.stopTimer();
+
+        if(this.status==false&&this.isCanvasInitiated){
+            this.btnPause.setText("RESUME");
+            this.status=true;
+        }
     }
 
     @Override
