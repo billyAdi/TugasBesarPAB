@@ -18,6 +18,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import static android.content.Context.SENSOR_SERVICE;
 
 /**
@@ -30,8 +32,11 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     protected ImageView ivCanvas;
     protected TextView timeTv;
     protected Button btnNew,btnPause;
+    private ArrayList<Lingkaran> obj;
     private int[][] posisi;
     protected TimerAsyncTask timerAsyncTask;
+
+    
 
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
@@ -43,6 +48,8 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     private float mAx;
     private float mAy;
     private final float mDelay = 2f;
+
+    private int radius1,radius2;
 
     private boolean isCanvasInitiated;
     private boolean isTimerStarted;
@@ -70,13 +77,16 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
     public static CanvasFragment newInstance(){
         CanvasFragment canvasFragment=new CanvasFragment();
+
         return canvasFragment;
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
 
         View view=inflater.inflate(R.layout.canvas_fragment,container,false);
+        this.obj=new ArrayList<Lingkaran>();
         this.timeTv=view.findViewById(R.id.time_tv);
         this.ivCanvas=view.findViewById(R.id.iv_canvas);
         this.btnNew=view.findViewById(R.id.canvas_btn_new);
@@ -133,7 +143,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.isTimerStarted=false;
         this.status=false;
         this.isSet=false;
-
+        this.obj=new ArrayList<Lingkaran>();
         this.posisi=new int[2][2];
 
         this.pitch=0;
@@ -230,6 +240,12 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
         this.paint1.setColor(Color.BLACK);
         this.paint2.setColor(Color.RED);
+        radius1=10;
+        radius2=15;
+        this.obj.add(new Lingkaran(radius1+(int)(Math.random() * (ivCanvas.getWidth()-radius1)),radius1+(int)(Math.random() * (ivCanvas.getHeight()-radius1)),radius1));
+        this.obj.add(new Lingkaran(radius2+(int)(Math.random() * (ivCanvas.getWidth()-radius2)),radius2+(int)(Math.random() * (ivCanvas.getHeight()-radius2)),radius2));
+
+
 
     }
 
@@ -243,40 +259,44 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     public void draw(){
 
 
-        int posX = (int)(Math.random() * ivCanvas.getWidth());
-        int posY = (int)(Math.random() * ivCanvas.getHeight());
-        posisi[0][0]=posX;
-        posisi[0][1]=posY;
 
-        this.mCanvas.drawCircle(posX,posY,10,this.paint1);
-        posX = (int)(Math.random() * ivCanvas.getWidth());
-        posY = (int)(Math.random() * ivCanvas.getHeight());
-        posisi[1][0]=posX;
-        posisi[1][1]=posY;
-        this.mCanvas.drawCircle(posX,posY,15,this.paint2);
+
+        this.mCanvas.drawCircle(obj.get(0).getPosX(),obj.get(0).getPosY(),obj.get(0).getRad(),this.paint1);
+        this.mCanvas.drawCircle(obj.get(1).getPosX(),obj.get(1).getPosY(),obj.get(1).getRad(),this.paint2);
         this.ivCanvas.invalidate();
     }
 
     public void redraw(int posxS,int posyS){
         if(this.isCanvasInitiated){
             this.resetCanvas();
-            this.posisi[0][0]=(int)(this.posisi[0][0]+(posxS));
-            this.posisi[0][1]=(int)(this.posisi[0][1]-(posyS));
-            if(this.posisi[0][0]<0){
-                this.posisi[0][0]=1;
+
+
+            this.obj.get(0).setSpeedX(this.obj.get(0).getSpeedX()+posxS);
+            this.obj.get(0).setSpeedY(this.obj.get(0).getSpeedY()-posyS);
+
+            int temp = this.obj.get(0).getPosX()+this.obj.get(0).getSpeedX();
+            if(temp<radius1){
+                this.obj.get(0).setSpeedX(this.obj.get(0).getSpeedX()/2);
+                temp=radius1;
+            }else if(temp>=(ivCanvas.getWidth()-radius1)){
+                this.obj.get(0).setSpeedX(this.obj.get(0).getSpeedX()/2);
+                temp = ivCanvas.getWidth()-radius1;
             }
-            else if(this.posisi[0][0]>ivCanvas.getWidth()){
-                this.posisi[0][0]=ivCanvas.getWidth()-1;
+            this.obj.get(0).setPosX(temp);
+            System.out.println(temp);
+            temp = this.obj.get(0).getPosY()+this.obj.get(0).getSpeedY();
+            if(temp<radius1){
+                this.obj.get(0).setSpeedY(this.obj.get(0).getSpeedY()/2);
+                temp=radius1;
+            }else if(temp>=(ivCanvas.getHeight()-radius1)){
+                this.obj.get(0).setSpeedY(this.obj.get(0).getSpeedY()/2);
+                temp = ivCanvas.getHeight()-radius1;
             }
-            if(this.posisi[0][1]<0){
-                this.posisi[0][1]=1;
-            }
-            else if(this.posisi[0][1]>ivCanvas.getHeight()){
-                this.posisi[0][1]=ivCanvas.getHeight()-1;
-            }
-            this.mCanvas.drawCircle( this.posisi[0][0],this.posisi[0][1],10,this.paint1);
-            this.mCanvas.drawCircle(this.posisi[1][0],this.posisi[1][1],15,this.paint2);
-            this.ivCanvas.invalidate();
+            System.out.println(temp);
+            this.obj.get(0).setPosY(temp);
+
+
+            this.draw();
         }
 
 
