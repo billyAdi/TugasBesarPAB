@@ -14,7 +14,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Speed  "
+            android:text="@string/speed_text"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             />
         <Spinner
@@ -33,7 +33,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Color 1"
+            android:text="@string/color1_text"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             />
         <Spinner
@@ -52,7 +52,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Color 2"
+            android:text="@string/color2_text"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             />
         <Spinner
@@ -71,7 +71,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bonus  "
+            android:text="@string/bonus_text"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             />
         <Spinner

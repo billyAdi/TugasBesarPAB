@@ -11,4 +11,10 @@
     <string name="new_text">New</string>
 
     <string name="pause_btn_text">Pause</string>
+
+    <string name="speed_text">Speed  </string>
+    <string name="color1_text">Color 1</string>
+    <string name="color2_text">Color 2</string>
+    <string name="bonus_text">Bonus  </string>
+
 </resources>
