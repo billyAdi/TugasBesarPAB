@@ -26,6 +26,7 @@ public class Presenter {
     private MainActivity ui;
     protected ArrayList<Integer> highScoreArrayList;
     private PenghitungScore penghitungScore;
+    private Setting setting;
 
     public Presenter(MainActivity ui) {
         this.ui = ui;
@@ -33,6 +34,19 @@ public class Presenter {
         this.getHighScoreFromWebService(1);
         this.penghitungScore=new PenghitungScore();
 
+        this.setting=new Setting(this.ui);
+
+        this.loadSettings();
+    }
+
+
+    public void saveSettings(String speed,String color1, String color2,int bonus){
+        this.setting.saveData(speed,color1,color2,bonus);
+    }
+
+    //load settings, abis itu langsung set spinner
+    private void loadSettings(){
+        this.setting.loadData();
     }
 
     public ArrayList<Integer> getHighScoreList(){
@@ -41,20 +55,20 @@ public class Presenter {
 
     public void updateHighScoreArray(){
 
-       //sorting dari paling gede ke kecil
+
         Collections.sort(this.highScoreArrayList, Collections.reverseOrder());
         int size= this.highScoreArrayList.size();
-        this.highScoreArrayList.remove(size-1); //buang elemen paling ujung
+        this.highScoreArrayList.remove(size-1);
 
-        this.ui.updateListView();//notify dataset changed, buat list view
+        this.ui.updateListView();
 
-        // udpate ke web service
+
          this.updateHighScoreToWebService();
 
     }
 
     public void addNewScore(int score){
-        //dipanggil pas udh beres game
+
         this.highScoreArrayList.add(score);
         this.updateHighScoreArray();
     }

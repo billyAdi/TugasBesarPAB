@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
@@ -12,7 +13,7 @@ import android.widget.Spinner;
  * Created by user on 4/30/2018.
  */
 
-public class SettingsFragment extends Fragment  {
+public class SettingsFragment extends Fragment implements AdapterView.OnItemSelectedListener {
     protected Spinner spinnerSpeed,spinnerColor1,spinnerColor2,spinnerBonus;
 
 
@@ -58,8 +59,39 @@ public class SettingsFragment extends Fragment  {
 
 
 
+        this.spinnerSpeed.setOnItemSelectedListener(this);
+        this.spinnerColor1.setOnItemSelectedListener(this);
+        this.spinnerColor2.setOnItemSelectedListener(this);
+        this.spinnerBonus.setOnItemSelectedListener(this);
+
         return view;
     }
 
 
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        if(adapterView.getId()==this.spinnerSpeed.getId()){
+
+        }
+        else if(adapterView.getId()==this.spinnerColor1.getId()){
+        }
+        else if(adapterView.getId()==this.spinnerColor2.getId()){
+
+        }
+        else if(adapterView.getId()==this.spinnerBonus.getId()){
+
+        }
+
+        String speed=this.spinnerSpeed.getSelectedItem().toString();
+        String color1=this.spinnerColor1.getSelectedItem().toString();
+        String color2=this.spinnerColor2.getSelectedItem().toString();
+        int bonus=Integer.parseInt(this.spinnerBonus.getSelectedItem().toString());
+
+        ((MainActivity)getActivity()).getPresenter().saveSettings(speed,color1,color2,bonus);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
+    }
 }
