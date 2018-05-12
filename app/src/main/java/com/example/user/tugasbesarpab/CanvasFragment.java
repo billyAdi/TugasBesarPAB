@@ -57,7 +57,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     private boolean isSet;
     private boolean isFinished;
     
-    private int jumlahBonus=10;
+    private int jumlahBonus;
 
 
     private int bonusCounter;
@@ -65,6 +65,8 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     private float pitch,roll;
 
     private int count;
+
+    private Setting setting;
 
     public CanvasFragment() {
     }
@@ -94,6 +96,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     public View onCreateView(LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
 
         View view=inflater.inflate(R.layout.canvas_fragment,container,false);
+        this.setting=((MainActivity)getActivity()).getPresenter().getSetting();
         this.obj=new ArrayList<Lingkaran>();
         this.bonus=new ArrayList<Lingkaran>();
         this.timeTv=view.findViewById(R.id.time_tv);
@@ -126,6 +129,9 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
         this.setTimeTv("00 : 00");
 
+
+        this.jumlahBonus=this.setting.getBonus();
+
         return view;
     }
 
@@ -133,7 +139,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.timeTv.setText(time);
     }
 
-
+    //jangan langsung pake getActivity(), tar diganti pake fragment listener
     public void endGame(){
         this.stopTimer();
         this.isFinished=true;
@@ -168,6 +174,10 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
             this.timerAsyncTask.cancel(true);
             this.isTimerStarted=false;
         }
+    }
+
+    public void unregisterListener(){
+        this.mSensorManager.unregisterListener(this);
     }
 
     public void resetFragment(){

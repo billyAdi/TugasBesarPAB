@@ -81,6 +81,22 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
         return view;
     }
 
+    public String getSpinnerSpeedValue(){
+        return this.spinnerSpeed.getSelectedItem().toString();
+    }
+
+    public String getSpinnerColor1Value(){
+        return this.spinnerColor1.getSelectedItem().toString();
+    }
+
+    public String getSpinnerColor2Value(){
+        return this.spinnerColor2.getSelectedItem().toString();
+    }
+
+    public int getSpinnerBonusValue(){
+        return Integer.parseInt(this.spinnerBonus.getSelectedItem().toString());
+    }
+
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {

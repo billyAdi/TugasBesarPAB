@@ -53,7 +53,9 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction ft=this.fragmentManager.beginTransaction();
         ft.add(R.id.fragment_container,this.mainMenuFragment);
         ft.add(R.id.fragment_container,this.highScoreFragment);
+        ft.add(R.id.fragment_container,this.settingsFragment);
         ft.hide(this.highScoreFragment);
+        ft.hide(this.settingsFragment);
         ft.commit();
 
         this.presenter=new Presenter(this);
@@ -91,6 +93,7 @@ public class MainActivity extends AppCompatActivity
         else if(this.canvasFragment.isVisible()){
            this.changePage(1);
            this.canvasFragment.stopTimer();
+           this.canvasFragment.unregisterListener();
         }
         else {
             super.onBackPressed();
@@ -139,13 +142,8 @@ public class MainActivity extends AppCompatActivity
 
             ft.commit();
         } else if (id == R.id.nav_settings) {
-            if(this.settingsFragment.isAdded()){
-                ft.show(this.settingsFragment);
-            }
-            else{
-                ft.add(R.id.fragment_container,this.settingsFragment);
-            }
-
+            ft.show(this.settingsFragment);
+            
             if(this.highScoreFragment.isAdded()){
                 ft.hide(this.highScoreFragment);
             }

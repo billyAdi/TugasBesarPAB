@@ -25,7 +25,7 @@ public class Presenter {
     protected ArrayList<Integer> highScoreArrayList;
     private PenghitungScore penghitungScore;
     private SettingManager settingManager;
-
+    private Setting setting;
 
     public Presenter(MainActivity ui) {
         this.ui = ui;
@@ -34,6 +34,7 @@ public class Presenter {
         this.penghitungScore=new PenghitungScore();
 
         this.settingManager =new SettingManager(this.ui);
+
 
     }
 
@@ -65,6 +66,11 @@ public class Presenter {
 
          this.updateHighScoreToWebService();
 
+    }
+
+    public Setting getSetting(){
+        Setting setting=new Setting(this.ui.settingsFragment.getSpinnerSpeedValue(),this.ui.settingsFragment.getSpinnerColor1Value(),this.ui.settingsFragment.getSpinnerColor2Value(),this.ui.settingsFragment.getSpinnerBonusValue());
+        return setting;
     }
 
     public void addNewScore(int score){
