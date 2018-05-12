@@ -35,6 +35,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     protected TextView timeTv;
     protected Button btnNew,btnPause;
     private ArrayList<Lingkaran> obj;
+    private ArrayList<Lingkaran> bonus;
     protected TimerAsyncTask timerAsyncTask;
 
     private SensorManager mSensorManager;
@@ -55,7 +56,12 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     private boolean status;
     private boolean isSet;
     private boolean isFinished;
+    
+private int jumlahBonus=10;
+    private int scoreBonus=100;
 
+    private int scoreSkrg=0;
+    
     private float pitch,roll;
 
     private int count;
@@ -81,12 +87,17 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         return canvasFragment;
 
     }
-
+    
+ public int getBonus(){
+        return this.scoreSkrg;
+    }
+    
     @Override
     public View onCreateView(LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
 
         View view=inflater.inflate(R.layout.canvas_fragment,container,false);
         this.obj=new ArrayList<Lingkaran>();
+        this.bonus=new ArrayList<Lingkaran>();
         this.timeTv=view.findViewById(R.id.time_tv);
         this.ivCanvas=view.findViewById(R.id.iv_canvas);
         this.btnNew=view.findViewById(R.id.canvas_btn_new);
@@ -130,7 +141,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.stopTimer();
         this.isFinished=true;
         mSensorManager.unregisterListener(this);
-        int score=((MainActivity)getActivity()).presenter.getScore(this.count);
+        int score=((MainActivity)getActivity()).presenter.getScore(this.count,getBonus());
 
 
         System.out.println(score);
@@ -172,6 +183,10 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.isSet=false;
         this.isFinished=false;
         this.obj=new ArrayList<Lingkaran>();
+        this.bonus=new ArrayList<Lingkaran>();
+        
+                this.scoreSkrg=0;
+
 
 
         this.pitch=0;
@@ -240,7 +255,10 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.obj.add(new Lingkaran(radius1+(int)(Math.random() * (ivCanvas.getWidth()-2*radius1)),radius1+(int)(Math.random() * (ivCanvas.getHeight()-2*radius1)),radius1));
         this.obj.add(new Lingkaran(radius2+(int)(Math.random() * (ivCanvas.getWidth()-2*radius2)),radius2+(int)(Math.random() * (ivCanvas.getHeight()-2*radius2)),radius2));
 
+        for(int i =0;i<jumlahBonus;i++){
+            this.bonus.add(new Lingkaran(radius1+(int)(Math.random() * (ivCanvas.getWidth()-2*radius1)),radius1+(int)(Math.random() * (ivCanvas.getHeight()-2*radius1)),radius1));
 
+        }
 
     }
 
@@ -251,18 +269,28 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         }
     }
     
-    public boolean cekCollide(){
-        double xDif = obj.get(0).getPosX() - obj.get(1).getPosX();
-        double yDif = obj.get(0).getPosY() - obj.get(1).getPosY();
+   public boolean cekCollide(Lingkaran l1,Lingkaran l2){
+        double xDif = l1.getPosX() - l2.getPosX();
+        double yDif = l1.getPosY() - l2.getPosY();
         double distanceSquared = xDif * xDif + yDif * yDif;
-        return distanceSquared < (radius1 + radius2) * (radius1 + radius2);   
+        return distanceSquared < (l1.getRad() + l2.getRad()) * (l1.getRad() + l2.getRad());
     }
 
     public void draw(){
         this.mCanvas.drawCircle(obj.get(1).getPosX(),obj.get(1).getPosY(),obj.get(1).getRad(),this.paint2);
         this.mCanvas.drawCircle(obj.get(0).getPosX(),obj.get(0).getPosY(),obj.get(0).getRad(),this.paint1);
-        if(this.cekCollide()){
-            endGame();   
+        if(this.cekCollide(obj.get(1),obj.get(0))){
+            endGame();
+        }
+        
+        for(int i =0;i<bonus.size();i++){
+            if(this.cekCollide(bonus.get(i),obj.get(0))){
+                scoreSkrg+=scoreBonus;
+                bonus.remove(i);
+            }
+            else{
+                this.mCanvas.drawCircle(bonus.get(i).getPosX(),bonus.get(i).getPosY(),bonus.get(i).getRad(),this.paint2);
+            }
         }
 
         this.ivCanvas.invalidate();
