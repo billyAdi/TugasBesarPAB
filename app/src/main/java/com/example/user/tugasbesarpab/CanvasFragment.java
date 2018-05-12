@@ -47,7 +47,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
     private float mAx;
     private float mAy;
-    private final float mDelay = 10f;
+    private float mDelay = 10f;
 
     private int radius1,radius2;
 
@@ -58,6 +58,8 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     private boolean isFinished;
     
     private int jumlahBonus;
+
+
 
 
     private int bonusCounter;
@@ -131,6 +133,8 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
 
         this.jumlahBonus=this.setting.getBonus();
+        this.mDelay=this.setting.getSpeed();
+
 
         return view;
     }
@@ -145,6 +149,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.isFinished=true;
         mSensorManager.unregisterListener(this);
         int score=((MainActivity)getActivity()).presenter.getScore(this.count,this.bonusCounter);
+        this.btnPause.setText("EXIT");
 
 
         System.out.println(score);
@@ -216,7 +221,8 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
             this.initializeCanvas();
             this.draw();
             this.startTimer();
-
+            this.btnPause.setText("PAUSE");
+            isFinished=false;
             this.isTimerStarted=true;
             this.isCanvasInitiated=true;
 
@@ -235,6 +241,9 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
                 this.startTimer();
                 this.isTimerStarted=true;
                 this.status=false;
+            }
+            else if(isFinished){
+                this.fl.changePage(1);
             }
 
 
@@ -266,7 +275,10 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
         for(int i =0;i<jumlahBonus;i++){
             this.bonus.add(new Lingkaran(radius1+(int)(Math.random() * (ivCanvas.getWidth()-2*radius1)),radius1+(int)(Math.random() * (ivCanvas.getHeight()-2*radius1)),radius1));
-
+            while (this.cekCollide(bonus.get(i),this.obj.get(1))){
+                bonus.get(i).setPosX(radius1+(int)(Math.random() * (ivCanvas.getWidth()-2*radius1)));
+                bonus.get(i).setPosY(radius1+(int)(Math.random() * (ivCanvas.getHeight()-2*radius1)));
+            }
         }
 
     }
