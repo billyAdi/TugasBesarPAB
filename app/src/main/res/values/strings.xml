@@ -17,6 +17,14 @@
     <string name="color2_text">Color 2</string>
     <string name="bonus_text">Bonus  </string>
 
+
+    <string-array name="speedArray">
+        <item>Slow</item>
+        <item>Normal</item>
+        <item>Fast</item>
+    </string-array>
+
+
     <string-array name="color1Array">
         <item>BLACK</item>
         <item>BLUE</item>
