@@ -15,7 +15,7 @@ import android.widget.Spinner;
 
 public class SettingsFragment extends Fragment implements AdapterView.OnItemSelectedListener {
     protected Spinner spinnerSpeed,spinnerColor1,spinnerColor2,spinnerBonus;
-
+    private int flag;
 
     public SettingsFragment() {
     }
@@ -57,12 +57,26 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
         this.spinnerColor2.setAdapter(adapter3);
         this.spinnerBonus.setAdapter(adapter4);
 
-
-
         this.spinnerSpeed.setOnItemSelectedListener(this);
         this.spinnerColor1.setOnItemSelectedListener(this);
         this.spinnerColor2.setOnItemSelectedListener(this);
         this.spinnerBonus.setOnItemSelectedListener(this);
+
+        int[] settings=((MainActivity)getActivity()).getPresenter().loadSettings();
+
+        if(settings[0]!=-1){
+            this.spinnerSpeed.setSelection(settings[0]);
+        }
+        if(settings[1]!=-1){
+            this.spinnerColor1.setSelection(settings[1]);
+        }
+        if(settings[2]!=-1){
+            this.spinnerColor2.setSelection(settings[2]);
+        }
+        if(settings[3]!=-1){
+            this.spinnerBonus.setSelection(settings[3]);
+        }
+
 
         return view;
     }
@@ -70,24 +84,17 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        if(adapterView.getId()==this.spinnerSpeed.getId()){
 
-        }
-        else if(adapterView.getId()==this.spinnerColor1.getId()){
-        }
-        else if(adapterView.getId()==this.spinnerColor2.getId()){
-
-        }
-        else if(adapterView.getId()==this.spinnerBonus.getId()){
-
+        if(this.flag>=4){
+            int speed=this.spinnerSpeed.getSelectedItemPosition();
+            int color1=this.spinnerColor1.getSelectedItemPosition();
+            int color2=this.spinnerColor2.getSelectedItemPosition();
+            int bonus=this.spinnerBonus.getSelectedItemPosition();
+            ((MainActivity)getActivity()).getPresenter().saveSettings(speed,color1,color2,bonus);
         }
 
-        String speed=this.spinnerSpeed.getSelectedItem().toString();
-        String color1=this.spinnerColor1.getSelectedItem().toString();
-        String color2=this.spinnerColor2.getSelectedItem().toString();
-        int bonus=Integer.parseInt(this.spinnerBonus.getSelectedItem().toString());
+        this.flag++;
 
-        ((MainActivity)getActivity()).getPresenter().saveSettings(speed,color1,color2,bonus);
     }
 
     @Override

@@ -1,7 +1,5 @@
 package com.example.user.tugasbesarpab;
 
-import android.text.method.HideReturnsTransformationMethod;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -26,7 +24,8 @@ public class Presenter {
     private MainActivity ui;
     protected ArrayList<Integer> highScoreArrayList;
     private PenghitungScore penghitungScore;
-    private Setting setting;
+    private SettingManager settingManager;
+
 
     public Presenter(MainActivity ui) {
         this.ui = ui;
@@ -34,20 +33,21 @@ public class Presenter {
         this.getHighScoreFromWebService(1);
         this.penghitungScore=new PenghitungScore();
 
-        this.setting=new Setting(this.ui);
+        this.settingManager =new SettingManager(this.ui);
 
-        this.loadSettings();
+    }
+
+    //yg disimpen tuh index spinner nya
+    public void saveSettings(int speed,int color1, int color2,int bonus){
+        this.settingManager.saveSettings(speed,color1,color2,bonus);
+    }
+
+    //load index nya ke settings fragment
+    public int[] loadSettings(){
+        return this.settingManager.loadSettings();
     }
 
 
-    public void saveSettings(String speed,String color1, String color2,int bonus){
-        this.setting.saveData(speed,color1,color2,bonus);
-    }
-
-    //load settings, abis itu langsung set spinner
-    private void loadSettings(){
-        this.setting.loadData();
-    }
 
     public ArrayList<Integer> getHighScoreList(){
         return this.highScoreArrayList;
