@@ -43,7 +43,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
     protected Canvas mCanvas;
     protected Bitmap mBitmap;
-    protected Paint paint1,paint2;
+    protected Paint paint1,paint2,paint3;
 
     private float mAx;
     private float mAy;
@@ -57,10 +57,10 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     private boolean isSet;
     private boolean isFinished;
     
-private int jumlahBonus=10;
-    private int scoreBonus=100;
+    private int jumlahBonus=10;
 
-    private int scoreSkrg=0;
+
+    private int bonusCounter;
     
     private float pitch,roll;
 
@@ -88,9 +88,7 @@ private int jumlahBonus=10;
 
     }
     
- public int getBonus(){
-        return this.scoreSkrg;
-    }
+
     
     @Override
     public View onCreateView(LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
@@ -119,6 +117,7 @@ private int jumlahBonus=10;
         this.isSet=false;
         this.isFinished=false;
 
+        this.bonusCounter=0;
 
         this.pitch=0;
         this.roll=0;
@@ -134,14 +133,12 @@ private int jumlahBonus=10;
         this.timeTv.setText(time);
     }
 
-    /**
-     * panggil method ini klo udh beres gamenya
-     */
+
     public void endGame(){
         this.stopTimer();
         this.isFinished=true;
         mSensorManager.unregisterListener(this);
-        int score=((MainActivity)getActivity()).presenter.getScore(this.count,getBonus());
+        int score=((MainActivity)getActivity()).presenter.getScore(this.count,this.bonusCounter);
 
 
         System.out.println(score);
@@ -157,7 +154,7 @@ private int jumlahBonus=10;
                 });
         alertDialog.show();
 
-        //abis itu munculin pop up , buat kasih tau score
+
     }
 
     public void startTimer(){
@@ -185,9 +182,7 @@ private int jumlahBonus=10;
         this.obj=new ArrayList<Lingkaran>();
         this.bonus=new ArrayList<Lingkaran>();
         
-                this.scoreSkrg=0;
-
-
+        this.bonusCounter=0;
 
         this.pitch=0;
         this.roll=0;
@@ -244,12 +239,16 @@ private int jumlahBonus=10;
 
         this.paint1=new Paint();
         this.paint2=new Paint();
+        this.paint3=new Paint();
 
         this.paint1.setStyle(Paint.Style.FILL);
         this.paint2.setStyle(Paint.Style.FILL);
+        this.paint3.setStyle(Paint.Style.FILL);
 
         this.paint1.setColor(Color.BLACK);
         this.paint2.setColor(Color.RED);
+        this.paint3.setColor(Color.CYAN);
+
         radius1=10;
         radius2=15;
         this.obj.add(new Lingkaran(radius1+(int)(Math.random() * (ivCanvas.getWidth()-2*radius1)),radius1+(int)(Math.random() * (ivCanvas.getHeight()-2*radius1)),radius1));
@@ -285,11 +284,11 @@ private int jumlahBonus=10;
         
         for(int i =0;i<bonus.size();i++){
             if(this.cekCollide(bonus.get(i),obj.get(0))){
-                scoreSkrg+=scoreBonus;
+                this.bonusCounter++;
                 bonus.remove(i);
             }
             else{
-                this.mCanvas.drawCircle(bonus.get(i).getPosX(),bonus.get(i).getPosY(),bonus.get(i).getRad(),this.paint2);
+                this.mCanvas.drawCircle(bonus.get(i).getPosX(),bonus.get(i).getPosY(),bonus.get(i).getRad(),this.paint3);
             }
         }
 
@@ -314,7 +313,7 @@ private int jumlahBonus=10;
                 temp = ivCanvas.getWidth()-radius1;
             }
             this.obj.get(0).setPosX(temp);
-            //System.out.println(temp);
+
             temp = this.obj.get(0).getPosY()+this.obj.get(0).getSpeedY();
             if(temp<radius1){
                 this.obj.get(0).setSpeedY(this.obj.get(0).getSpeedY()/2);
@@ -323,7 +322,7 @@ private int jumlahBonus=10;
                 this.obj.get(0).setSpeedY(this.obj.get(0).getSpeedY()/2);
                 temp = ivCanvas.getHeight()-radius1;
             }
-            //System.out.println(temp);
+
             this.obj.get(0).setPosY(temp);
 
 

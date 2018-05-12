@@ -7,14 +7,14 @@ package com.example.user.tugasbesarpab;
 public class PenghitungScore {
 
 
-    public int getScore(int count,int bonus){
-        //blm ditambahin score klo kena objek bonus
+    public int getScore(int count,int bonusCounter){
+
 
         int result=10000-(count*10);
         if(result<100){
             result=100;
         }
-        return result+bonus;
+        return result+bonusCounter*100;
     }
 
 
