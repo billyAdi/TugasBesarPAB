@@ -255,8 +255,8 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.paint2.setStyle(Paint.Style.FILL);
         this.paint3.setStyle(Paint.Style.FILL);
 
-        this.paint1.setColor(Color.BLACK);
-        this.paint2.setColor(Color.RED);
+        this.paint1.setColor(this.setting.getColor1());
+        this.paint2.setColor(this.setting.getColor2());
         this.paint3.setColor(Color.CYAN);
 
         radius1=10;
