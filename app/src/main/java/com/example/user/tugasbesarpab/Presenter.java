@@ -134,8 +134,8 @@ public class Presenter {
 
     }
 
-    public int getScore(int count){
-        return this.penghitungScore.getScore(count);
+    public int getScore(int count,int bonus){
+        return this.penghitungScore.getScore(count,bonus);
     }
 
 
