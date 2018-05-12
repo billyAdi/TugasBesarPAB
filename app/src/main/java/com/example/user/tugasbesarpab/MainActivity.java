@@ -78,8 +78,9 @@ public class MainActivity extends AppCompatActivity
         }
         else if(this.settingsFragment.isVisible()){
             FragmentTransaction ft=this.fragmentManager.beginTransaction();
-            ft.show(this.mainMenuFragment);
+
             ft.hide(this.settingsFragment);
+            ft.show(this.mainMenuFragment);
             ft.commit();
             getSupportActionBar().setTitle("TugasBesarPAB");
         }
@@ -152,7 +153,30 @@ public class MainActivity extends AppCompatActivity
             getSupportActionBar().setTitle("Settings");
             ft.commit();
         } else if (id == R.id.nav_exit) {
-            super.onBackPressed();
+
+            if(this.settingsFragment.isVisible()){
+                ft.hide(this.settingsFragment);
+                if(this.highScoreFragment.isAdded()) {
+
+                    ft.hide(this.highScoreFragment);
+                }
+                ft.show(this.mainMenuFragment);
+                ft.commit();
+
+            }
+            else if(this.highScoreFragment.isVisible()) {
+                ft.hide(this.highScoreFragment);
+                if (this.settingsFragment.isAdded()){
+
+                    ft.hide(this.settingsFragment);
+                }
+                ft.show(this.mainMenuFragment);
+                ft.commit();
+
+            }
+            else {
+                super.onBackPressed();
+            }
         }
 
         this.drawer.closeDrawer(GravityCompat.START);
