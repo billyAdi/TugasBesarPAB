@@ -235,7 +235,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
                 this.stopTimer();
                 this.status=true;
             }
-            else if(this.status==true){
+            else if(this.status==true&&this.isFinished==false){
                 mSensorManager.registerListener(this, mAccelerometer, (int) mDelay);
                 this.btnPause.setText("PAUSE");
                 this.startTimer();
