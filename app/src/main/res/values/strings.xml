@@ -17,4 +17,30 @@
     <string name="color2_text">Color 2</string>
     <string name="bonus_text">Bonus  </string>
 
+    <string-array name="color1Array">
+        <item>BLACK</item>
+        <item>BLUE</item>
+        <item>YELLOW</item>
+        <item>GREEN</item>
+    </string-array>
+
+    <string-array name="color2Array">
+        <item>GRAY</item>
+        <item>RED</item>
+        <item>MAGENTA</item>
+    </string-array>
+
+    <string-array name="bonusArray">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+    </string-array>
 </resources>
