@@ -26,16 +26,79 @@ public class Presenter {
     private PenghitungScore penghitungScore;
     private SettingManager settingManager;
     private Setting setting;
+    private ArrayList<Lingkaran> obj;
+    private ArrayList<Lingkaran> bonus;
 
     public Presenter(MainActivity ui) {
         this.ui = ui;
         this.highScoreArrayList=new ArrayList<Integer>();
         this.getHighScoreFromWebService(1);
         this.penghitungScore=new PenghitungScore();
-
+        this.obj=new ArrayList<Lingkaran>();
+        this.bonus=new ArrayList<Lingkaran>();
         this.settingManager =new SettingManager(this.ui);
 
 
+    }
+
+    public void renewArray(){
+
+        this.obj=new ArrayList<Lingkaran>();
+        this.bonus=new ArrayList<Lingkaran>();
+    }
+
+    public Lingkaran getPlayer(){
+        return this.obj.get(0);
+    }
+
+    public Lingkaran getBonus(int i){
+        return this.bonus.get(i);
+    }
+
+    public void removeBonus(int i){
+         this.bonus.remove(i);
+    }
+
+    public Lingkaran getEnd(){
+        return this.obj.get(1);
+    }
+
+    public void gerakPlayer(int x,int y,int canvasWidth,int canvasHeight){
+        Lingkaran player =this.obj.get(0);
+        player.setSpeedX(player.getSpeedX()+x);
+        player.setSpeedY(player.getSpeedY()-y);
+
+        int temp = player.getPosX()+player.getSpeedX();
+        if(temp<player.getRad()){
+            player.setSpeedX(player.getSpeedX()/2);
+            temp=player.getRad();
+        }else if(temp>=(canvasWidth-player.getRad())){
+            player.setSpeedX(player.getSpeedX()/2);
+            temp = canvasWidth-player.getRad();
+        }
+
+        player.setPosX(temp);
+
+        temp =  player.getPosY()+ player.getSpeedY();
+        if(temp<player.getRad()){
+            player.setSpeedY( player.getSpeedY()/2);
+            temp=player.getRad();
+        }else if(temp>=(canvasHeight-player.getRad())){
+            this.obj.get(0).setSpeedY(this.obj.get(0).getSpeedY()/2);
+            temp = canvasHeight-player.getRad();
+        }
+
+        player.setPosY(temp);
+
+
+    }
+
+    public void addBonus(int posx,int posy,int radius){
+        this.bonus.add(new Lingkaran(posx,posy,radius));
+    }
+
+    public void addObj(int posx,int posy,int radius){
+        this.obj.add(new Lingkaran(posx,posy,radius));
     }
 
     //yg disimpen tuh index spinner nya
@@ -77,6 +140,17 @@ public class Presenter {
 
         this.highScoreArrayList.add(score);
         this.updateHighScoreArray();
+    }
+
+    public boolean cekCollide(Lingkaran l1,Lingkaran l2){
+        double xDif = l1.getPosX() - l2.getPosX();
+        double yDif = l1.getPosY() - l2.getPosY();
+        double distanceSquared = xDif * xDif + yDif * yDif;
+        return distanceSquared < (l1.getRad() + l2.getRad()) * (l1.getRad() + l2.getRad());
+    }
+
+    public float hitungArah(float val){
+        return Math.signum(val) * Math.abs(val);
     }
 
     public void getHighScoreFromWebService(final int page){
