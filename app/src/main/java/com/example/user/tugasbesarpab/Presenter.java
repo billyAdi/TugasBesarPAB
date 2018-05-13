@@ -84,7 +84,7 @@ public class Presenter {
             player.setSpeedY( player.getSpeedY()/2);
             temp=player.getRad();
         }else if(temp>=(canvasHeight-player.getRad())){
-            this.obj.get(0).setSpeedY(this.obj.get(0).getSpeedY()/2);
+            player.setSpeedY(player.getSpeedY()/2);
             temp = canvasHeight-player.getRad();
         }
 
