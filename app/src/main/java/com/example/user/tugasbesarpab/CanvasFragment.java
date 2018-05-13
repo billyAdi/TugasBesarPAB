@@ -20,7 +20,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 
 import static android.content.Context.SENSOR_SERVICE;
 
@@ -34,8 +33,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     protected ImageView ivCanvas;
     protected TextView timeTv;
     protected Button btnNew,btnPause;
-    private ArrayList<Lingkaran> obj;
-    private ArrayList<Lingkaran> bonus;
+
     protected TimerAsyncTask timerAsyncTask;
 
     private SensorManager mSensorManager;
@@ -59,7 +57,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     
     private int jumlahBonus;
 
-
+    private Presenter presenter;
 
 
     private int bonusCounter;
@@ -98,9 +96,10 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     public View onCreateView(LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
 
         View view=inflater.inflate(R.layout.canvas_fragment,container,false);
-        this.setting=((MainActivity)getActivity()).getPresenter().getSetting();
-        this.obj=new ArrayList<Lingkaran>();
-        this.bonus=new ArrayList<Lingkaran>();
+
+        this.presenter=((MainActivity)getActivity()).getPresenter();
+        this.setting=presenter.getSetting();
+
         this.timeTv=view.findViewById(R.id.time_tv);
         this.ivCanvas=view.findViewById(R.id.iv_canvas);
         this.btnNew=view.findViewById(R.id.canvas_btn_new);
@@ -148,12 +147,12 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.stopTimer();
         this.isFinished=true;
         mSensorManager.unregisterListener(this);
-        int score=((MainActivity)getActivity()).presenter.getScore(this.count,this.bonusCounter);
+        int score=presenter.getScore(this.count,this.bonusCounter);
         this.btnPause.setText("EXIT");
 
 
         System.out.println(score);
-        ((MainActivity)getActivity()).presenter.addNewScore(score);
+        presenter.addNewScore(score);
 
         AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
         alertDialog.setMessage("Permainan selesai. Score akhir: "+score);
@@ -194,8 +193,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.status=false;
         this.isSet=false;
         this.isFinished=false;
-        this.obj=new ArrayList<Lingkaran>();
-        this.bonus=new ArrayList<Lingkaran>();
+        this.presenter.renewArray();
         
         this.bonusCounter=0;
 
@@ -235,7 +233,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
                 this.stopTimer();
                 this.status=true;
             }
-            else if(this.status==true&&this.isFinished==false){
+            else if(this.status==true){
                 mSensorManager.registerListener(this, mAccelerometer, (int) mDelay);
                 this.btnPause.setText("PAUSE");
                 this.startTimer();
@@ -270,14 +268,14 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
         radius1=10;
         radius2=15;
-        this.obj.add(new Lingkaran(radius1+(int)(Math.random() * (ivCanvas.getWidth()-2*radius1)),radius1+(int)(Math.random() * (ivCanvas.getHeight()-2*radius1)),radius1));
-        this.obj.add(new Lingkaran(radius2+(int)(Math.random() * (ivCanvas.getWidth()-2*radius2)),radius2+(int)(Math.random() * (ivCanvas.getHeight()-2*radius2)),radius2));
+        this.presenter.addObj(radius1+(int)(Math.random() * (ivCanvas.getWidth()-2*radius1)),radius1+(int)(Math.random() * (ivCanvas.getHeight()-2*radius1)),radius1);
+        this.presenter.addObj(radius2+(int)(Math.random() * (ivCanvas.getWidth()-2*radius2)),radius2+(int)(Math.random() * (ivCanvas.getHeight()-2*radius2)),radius2);
 
         for(int i =0;i<jumlahBonus;i++){
-            this.bonus.add(new Lingkaran(radius1+(int)(Math.random() * (ivCanvas.getWidth()-2*radius1)),radius1+(int)(Math.random() * (ivCanvas.getHeight()-2*radius1)),radius1));
-            while (this.cekCollide(bonus.get(i),this.obj.get(1))){
-                bonus.get(i).setPosX(radius1+(int)(Math.random() * (ivCanvas.getWidth()-2*radius1)));
-                bonus.get(i).setPosY(radius1+(int)(Math.random() * (ivCanvas.getHeight()-2*radius1)));
+            this.presenter.addBonus(radius1+(int)(Math.random() * (ivCanvas.getWidth()-2*radius1)),radius1+(int)(Math.random() * (ivCanvas.getHeight()-2*radius1)),radius1);
+            while (this.presenter.cekCollide(presenter.getPlayer(),this.presenter.getBonus(i))){
+                this.presenter.getBonus(i).setPosX(radius1+(int)(Math.random() * (ivCanvas.getWidth()-2*radius1)));
+                this.presenter.getBonus(i).setPosY(radius1+(int)(Math.random() * (ivCanvas.getHeight()-2*radius1)));
             }
         }
 
@@ -290,27 +288,25 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         }
     }
     
-   public boolean cekCollide(Lingkaran l1,Lingkaran l2){
-        double xDif = l1.getPosX() - l2.getPosX();
-        double yDif = l1.getPosY() - l2.getPosY();
-        double distanceSquared = xDif * xDif + yDif * yDif;
-        return distanceSquared < (l1.getRad() + l2.getRad()) * (l1.getRad() + l2.getRad());
-    }
+
 
     public void draw(){
-        this.mCanvas.drawCircle(obj.get(1).getPosX(),obj.get(1).getPosY(),obj.get(1).getRad(),this.paint2);
-        this.mCanvas.drawCircle(obj.get(0).getPosX(),obj.get(0).getPosY(),obj.get(0).getRad(),this.paint1);
-        if(this.cekCollide(obj.get(1),obj.get(0))){
+        Lingkaran end = this.presenter.getEnd();
+        Lingkaran player = this.presenter.getPlayer();
+        this.mCanvas.drawCircle(end.getPosX(),end.getPosY(),end.getRad(),this.paint2);
+        this.mCanvas.drawCircle(player.getPosX(),player.getPosY(),player.getRad(),this.paint1);
+        if(this.presenter.cekCollide(player,end)){
             endGame();
         }
         
-        for(int i =0;i<bonus.size();i++){
-            if(this.cekCollide(bonus.get(i),obj.get(0))){
+        for(int i =0;i<jumlahBonus;i++){
+            Lingkaran bonus = this.presenter.getBonus(i);
+            if(this.presenter.cekCollide(bonus,player)){
                 this.bonusCounter++;
-                bonus.remove(i);
+                presenter.removeBonus(i);
             }
             else{
-                this.mCanvas.drawCircle(bonus.get(i).getPosX(),bonus.get(i).getPosY(),bonus.get(i).getRad(),this.paint3);
+                this.mCanvas.drawCircle(bonus.getPosX(),bonus.getPosY(),bonus.getRad(),this.paint3);
             }
         }
 
@@ -321,34 +317,10 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     public void redraw(int posxS,int posyS){
         if(this.isCanvasInitiated){
             this.resetCanvas();
-
-
-            this.obj.get(0).setSpeedX(this.obj.get(0).getSpeedX()+posxS);
-            this.obj.get(0).setSpeedY(this.obj.get(0).getSpeedY()-posyS);
-
-            int temp = this.obj.get(0).getPosX()+this.obj.get(0).getSpeedX();
-            if(temp<radius1){
-                this.obj.get(0).setSpeedX(this.obj.get(0).getSpeedX()/2);
-                temp=radius1;
-            }else if(temp>=(ivCanvas.getWidth()-radius1)){
-                this.obj.get(0).setSpeedX(this.obj.get(0).getSpeedX()/2);
-                temp = ivCanvas.getWidth()-radius1;
-            }
-            this.obj.get(0).setPosX(temp);
-
-            temp = this.obj.get(0).getPosY()+this.obj.get(0).getSpeedY();
-            if(temp<radius1){
-                this.obj.get(0).setSpeedY(this.obj.get(0).getSpeedY()/2);
-                temp=radius1;
-            }else if(temp>=(ivCanvas.getHeight()-radius1)){
-                this.obj.get(0).setSpeedY(this.obj.get(0).getSpeedY()/2);
-                temp = ivCanvas.getHeight()-radius1;
-            }
-
-            this.obj.get(0).setPosY(temp);
-
+           this.presenter.gerakPlayer(posxS,posyS,ivCanvas.getWidth(),ivCanvas.getHeight());
 
             this.draw();
+
         }
 
 
@@ -387,8 +359,8 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         mAx = bedaX;
         mAy = bedaY;
 
-        mAx = Math.signum(mAx) * Math.abs(mAx);
-        mAy = Math.signum(mAy) * Math.abs(mAy);
+        mAx = presenter.hitungArah(mAx);
+        mAy =  presenter.hitungArah(mAy);
         redraw((int)mAx  ,(int)mAy);
 
     }
