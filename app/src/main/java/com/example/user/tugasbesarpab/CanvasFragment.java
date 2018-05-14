@@ -45,7 +45,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
     private float mAx;
     private float mAy;
-    private float mDelay = 10f;
+    private float mDelay;
 
     private int radius1,radius2;
 
@@ -108,6 +108,9 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         mSensorManager = (SensorManager)getActivity().getSystemService(SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
+        System.out.println(this.setting.getSpeed());
+        this.mDelay=this.setting.getSpeed();
+
         mSensorManager.registerListener(this, mAccelerometer, (int) mDelay);
                    
 
@@ -132,7 +135,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
 
         this.jumlahBonus=this.setting.getBonus();
-        this.mDelay=this.setting.getSpeed();
+
 
 
         return view;
@@ -142,7 +145,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.timeTv.setText(time);
     }
 
-    //jangan langsung pake getActivity(), tar diganti pake fragment listener
+
     public void endGame(){
         this.stopTimer();
         this.isFinished=true;
@@ -151,7 +154,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.btnPause.setText("EXIT");
 
 
-        System.out.println(score);
+
         presenter.addNewScore(score);
 
         AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();

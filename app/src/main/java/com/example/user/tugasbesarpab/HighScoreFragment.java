@@ -23,7 +23,7 @@ public class HighScoreFragment extends Fragment {
         return highScoreFragment;
     }
 
-    //jgn langsung pake get activity, nanti hrs diganti pake fragment listener
+
     @Override
     public View onCreateView(LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.highscore_fragment,container,false);
@@ -36,7 +36,7 @@ public class HighScoreFragment extends Fragment {
 
         return view;
     }
-    //jgn langsung pake get activity, nanti hrs diganti pake fragment listener
+
     public void updateListView(){
         if(highScoreAdapter!=null) {
             this.highScoreAdapter.setArray(((MainActivity) getActivity()).getPresenter().getHighScoreList());

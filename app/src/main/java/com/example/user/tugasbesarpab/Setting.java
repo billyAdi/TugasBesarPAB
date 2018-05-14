@@ -37,13 +37,13 @@ public class Setting {
         }
 
         if(speed.equals("Slow")){
-            //atur speednya
+            this.speed=2;
         }
         else if(speed.equals("Normal")){
-            //atur speednya
+            this.speed=1;
         }
         else if(speed.equals("Fast")){
-            //atur speednya
+            this.speed=0.5f;
         }
 
 

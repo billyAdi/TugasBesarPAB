@@ -46,15 +46,7 @@ public class Lingkaran {
     public void setSpeedY(int speedY) {
         this.speedY = speedY;
     }
-
-    public Lingkaran(int posX, int posY, int rad, int speedX, int speedY) {
-
-        this.posX = posX;
-        this.posY = posY;
-        this.rad = rad;
-        this.speedX = speedX;
-        this.speedY = speedY;
-    }
+    
 
     public Lingkaran(int posX, int posY, int rad) {
 

@@ -204,12 +204,4 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    @Override
-    public void resetCanvasFragment() {
-        FragmentTransaction ft=this.fragmentManager.beginTransaction();
-        ft.remove(this.canvasFragment);
-        this.canvasFragment=CanvasFragment.newInstance();
-        ft.add(R.id.fragment_container,this.canvasFragment);
-        ft.commit();
-    }
 }

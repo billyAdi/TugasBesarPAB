@@ -163,7 +163,7 @@ public class Presenter {
                         @Override
                         public void onResponse(String response) {
                             try {
-                                System.out.println(response);
+
                                 JSONObject json=new JSONObject(response);
                                 JSONArray data=json.getJSONArray("data");
 
@@ -202,7 +202,7 @@ public class Presenter {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            System.out.println(response);
+
                         }
                     }, new Response.ErrorListener() {
                 @Override
