@@ -97,7 +97,13 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
         View view=inflater.inflate(R.layout.canvas_fragment,container,false);
 
-        this.presenter=((MainActivity)getActivity()).getPresenter();
+        if(fl!=null){
+            this.presenter=((MainActivity)fl).getPresenter();
+
+        }
+        else {
+            this.presenter = ((MainActivity) getActivity()).getPresenter();
+        }
         this.setting=presenter.getSetting();
 
         this.timeTv=view.findViewById(R.id.time_tv);
