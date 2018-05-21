@@ -6,6 +6,15 @@ package com.example.user.tugasbesarpab;
 
 public class Lingkaran {
     public int posX,posY,rad,speedX,speedY;
+    private boolean collided =false;
+
+    public void collide(){
+        this.collided=true;
+    }
+
+    public boolean getCollided(){
+        return this.collided;
+    }
 
     public int getPosX() {
         return posX;
