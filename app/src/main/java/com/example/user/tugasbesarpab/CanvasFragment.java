@@ -96,7 +96,6 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
     public View onCreateView(LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
 
         View view=inflater.inflate(R.layout.canvas_fragment,container,false);
-
         if(fl!=null){
             this.presenter=((MainActivity)fl).getPresenter();
 
@@ -153,25 +152,26 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
 
     public void endGame(){
-        this.stopTimer();
-        this.isFinished=true;
-        mSensorManager.unregisterListener(this);
-        int score=presenter.getScore(this.count,this.bonusCounter);
-        this.btnPause.setText("EXIT");
+        if(!isFinished) {
+            this.stopTimer();
+            this.isFinished = true;
+            mSensorManager.unregisterListener(this);
+            int score = presenter.getScore(this.count, this.bonusCounter);
+            this.btnPause.setText("EXIT");
 
 
+            presenter.addNewScore(score);
 
-        presenter.addNewScore(score);
-
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
-        alertDialog.setMessage("Permainan selesai. Score akhir: "+score);
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-        alertDialog.show();
+            AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+            alertDialog.setMessage("Permainan selesai. Score akhir: " + score);
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+        }
 
 
     }
@@ -275,16 +275,28 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.paint2.setColor(this.setting.getColor2());
         this.paint3.setColor(Color.CYAN);
 
-        radius1=10;
-        radius2=15;
+        radius1=100;
+        radius2=150;
         this.presenter.addObj(radius1+(int)(Math.random() * (ivCanvas.getWidth()-2*radius1)),radius1+(int)(Math.random() * (ivCanvas.getHeight()-2*radius1)),radius1);
-        this.presenter.addObj(radius2+(int)(Math.random() * (ivCanvas.getWidth()-2*radius2)),radius2+(int)(Math.random() * (ivCanvas.getHeight()-2*radius2)),radius2);
+        this.presenter.addObj(radius1+(int)(Math.random() * (ivCanvas.getWidth()-2*radius1)),radius1+(int)(Math.random() * (ivCanvas.getHeight()-2*radius1)),radius1);
+
+        while (this.presenter.cekCollide(presenter.getPlayer(0), this.presenter.getPlayer(1))) {
+
+            this.presenter.setPlayer(1,radius1+(int)(Math.random() * (ivCanvas.getWidth()-2*radius1)),radius1+(int)(Math.random() * (ivCanvas.getHeight()-2*radius1)));
+
+
+        }
+            //this.presenter.addObj(radius2+(int)(Math.random() * (ivCanvas.getWidth()-2*radius2)),radius2+(int)(Math.random() * (ivCanvas.getHeight()-2*radius2)),radius2);
+        this.presenter.ubahGoal(radius2+(int)(Math.random() * (ivCanvas.getWidth()-2*radius2)),radius2+(int)(Math.random() * (ivCanvas.getHeight()-2*radius2)),radius2);
 
         for(int i =0;i<jumlahBonus;i++){
             this.presenter.addBonus(radius1+(int)(Math.random() * (ivCanvas.getWidth()-2*radius1)),radius1+(int)(Math.random() * (ivCanvas.getHeight()-2*radius1)),radius1);
-            while (this.presenter.cekCollide(presenter.getPlayer(),this.presenter.getBonus(i))){
-                this.presenter.getBonus(i).setPosX(radius1+(int)(Math.random() * (ivCanvas.getWidth()-2*radius1)));
-                this.presenter.getBonus(i).setPosY(radius1+(int)(Math.random() * (ivCanvas.getHeight()-2*radius1)));
+            int size = presenter.getPlayerSize();
+            for(int k=0;k<size;k++) {
+                while (this.presenter.cekCollide(presenter.getPlayer(k), this.presenter.getBonus(i))) {
+                    this.presenter.getBonus(i).setPosX(radius1 + (int) (Math.random() * (ivCanvas.getWidth() - 2 * radius1)));
+                    this.presenter.getBonus(i).setPosY(radius1 + (int) (Math.random() * (ivCanvas.getHeight() - 2 * radius1)));
+                }
             }
         }
 
@@ -301,23 +313,104 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
     public void draw(){
         Lingkaran end = this.presenter.getEnd();
-        Lingkaran player = this.presenter.getPlayer();
+        Lingkaran player1 = this.presenter.getPlayer(0);
+
         this.mCanvas.drawCircle(end.getPosX(),end.getPosY(),end.getRad(),this.paint2);
-        this.mCanvas.drawCircle(player.getPosX(),player.getPosY(),player.getRad(),this.paint1);
-        if(this.presenter.cekCollide(player,end)){
-            endGame();
+        int size = this.presenter.getPlayerSize();
+        for(int i =0;i<size;i++) {
+            Lingkaran player = this.presenter.getPlayer(i);
+            if (this.presenter.cekCollide(player, end)) {
+                player.collide();
+                if(presenter.isCollide()) {
+                    endGame();
+                }
+            }
         }
         
         for(int i =0;i<jumlahBonus;i++){
             Lingkaran bonus = this.presenter.getBonus(i);
-            if(this.presenter.cekCollide(bonus,player)){
-                this.bonusCounter++;
-                presenter.removeBonus(i);
-            }
-            else{
-                this.mCanvas.drawCircle(bonus.getPosX(),bonus.getPosY(),bonus.getRad(),this.paint3);
+            boolean status=true;
+            for(int j=0;j<size&&status;j++) {
+                Lingkaran player = this.presenter.getPlayer(j);
+
+                if (this.presenter.cekCollide(bonus, player)) {
+                    this.bonusCounter++;
+                    presenter.removeBonus(i);
+                } else {
+                    this.mCanvas.drawCircle(bonus.getPosX(), bonus.getPosY(), bonus.getRad(), this.paint3);
+                }
             }
         }
+
+
+        if(size>1) {
+            boolean x1,x2,y1,y2;
+
+            x1=false;
+            x2=false;
+            y1=false;
+            y2=false;
+            Lingkaran player2 = this.presenter.getPlayer(1);
+            this.mCanvas.drawCircle(player1.getPosX(), player1.getPosY(), player1.getRad(), this.paint1);
+
+            this.mCanvas.drawCircle(player2.getPosX(), player2.getPosY(), player2.getRad(), this.paint1);
+            if(this.presenter.cekCollide(player1, player2)){
+                int operatorx=-1;
+                int operatory=-1;
+                /*if(player1.getSpeedX()>0 && player2.getSpeedX()>0){
+
+                }
+                else{
+                    operatorx=-1;
+                }
+                if(player1.getSpeedY()>0 && player2.getSpeedY()>0){
+
+                }
+                else{
+                    operatory=-1;
+                }*/
+
+                if(player1.getCollided()){
+                    player2.setSpeedX(operatorx * player2.getSpeedX());
+                    player2.setSpeedY(operatory * player2.getSpeedY());
+                    this.presenter.gerakPlayer(1);
+                }
+                else if(player2.getCollided()){
+                    player1.setSpeedX(operatorx * player1.getSpeedX());
+                    player1.setSpeedY(operatory * player1.getSpeedY());
+                    this.presenter.gerakPlayer(0);
+                }
+                else {
+
+
+                    if (player1.getSpeedX() < player2.getSpeedX()) {
+                        player1.setSpeedX(operatorx * player1.getSpeedX());
+                        x1=true;
+
+                    } else {
+                        player2.setSpeedX(operatorx * player2.getSpeedX());
+                        x2=true;
+                    }
+
+                    if (player1.getSpeedY() < player2.getSpeedY()) {
+                        player1.setSpeedY(operatory * player1.getSpeedY());
+                        y1=true;
+                    } else {
+                        player2.setSpeedY(operatory * player2.getSpeedY());
+                        y2=true;
+
+                    }
+
+
+                }
+
+            }
+
+            this.presenter.gerakPlayer(0,x1,y1);
+            this.presenter.gerakPlayer(1,x2,y2);
+        }
+
+
 
         this.ivCanvas.invalidate();
 
