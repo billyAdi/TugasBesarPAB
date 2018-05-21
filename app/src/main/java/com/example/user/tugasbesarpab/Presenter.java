@@ -26,6 +26,8 @@ public class Presenter {
     private PenghitungScore penghitungScore;
     private SettingManager settingManager;
     private Setting setting;
+    private Lingkaran goal;
+
     private ArrayList<Lingkaran> obj;
     private ArrayList<Lingkaran> bonus;
 
@@ -47,8 +49,8 @@ public class Presenter {
         this.bonus=new ArrayList<Lingkaran>();
     }
 
-    public Lingkaran getPlayer(){
-        return this.obj.get(0);
+    public Lingkaran getPlayer(int i){
+        return this.obj.get(i);
     }
 
     public Lingkaran getBonus(int i){
@@ -60,35 +62,53 @@ public class Presenter {
     }
 
     public Lingkaran getEnd(){
-        return this.obj.get(1);
+        return this.goal;
+        //return this.obj.get(1);
+    }
+
+    public int getPlayerSize(){
+        return this.obj.size();
+    }
+
+    public boolean isCollide(){
+        for(int i =0;i<obj.size();i++){
+            if(!obj.get(i).getCollided()){
+                return false;
+            }
+        }
+        return true;
     }
 
     public void gerakPlayer(int x,int y,int canvasWidth,int canvasHeight){
-        Lingkaran player =this.obj.get(0);
-        player.setSpeedX(player.getSpeedX()+x);
-        player.setSpeedY(player.getSpeedY()-y);
+        for(int i = 0;i<obj.size();i++) {
+            Lingkaran player = this.obj.get(i);
+            if (!player.getCollided()) {
+                player.setSpeedX(player.getSpeedX() + x);
+                player.setSpeedY(player.getSpeedY() - y);
 
-        int temp = player.getPosX()+player.getSpeedX();
-        if(temp<player.getRad()){
-            player.setSpeedX(player.getSpeedX()/2);
-            temp=player.getRad();
-        }else if(temp>=(canvasWidth-player.getRad())){
-            player.setSpeedX(player.getSpeedX()/2);
-            temp = canvasWidth-player.getRad();
+                int temp = player.getPosX() + player.getSpeedX();
+                if (temp < player.getRad()) {
+                    player.setSpeedX(player.getSpeedX() / 2);
+                    temp = player.getRad();
+                } else if (temp >= (canvasWidth - player.getRad())) {
+                    player.setSpeedX(player.getSpeedX() / 2);
+                    temp = canvasWidth - player.getRad();
+                }
+
+                player.setPosX(temp);
+
+                temp = player.getPosY() + player.getSpeedY();
+                if (temp < player.getRad()) {
+                    player.setSpeedY(player.getSpeedY() / 2);
+                    temp = player.getRad();
+                } else if (temp >= (canvasHeight - player.getRad())) {
+                    player.setSpeedY(player.getSpeedY() / 2);
+                    temp = canvasHeight - player.getRad();
+                }
+
+                player.setPosY(temp);
+            }
         }
-
-        player.setPosX(temp);
-
-        temp =  player.getPosY()+ player.getSpeedY();
-        if(temp<player.getRad()){
-            player.setSpeedY( player.getSpeedY()/2);
-            temp=player.getRad();
-        }else if(temp>=(canvasHeight-player.getRad())){
-            player.setSpeedY(player.getSpeedY()/2);
-            temp = canvasHeight-player.getRad();
-        }
-
-        player.setPosY(temp);
 
 
     }
@@ -99,6 +119,15 @@ public class Presenter {
 
     public void addObj(int posx,int posy,int radius){
         this.obj.add(new Lingkaran(posx,posy,radius));
+    }
+
+    public void setPlayer(int idx,int posx,int posy){
+        this.obj.get(idx).setPosX(posx);
+        this.obj.get(idx).setPosX(posy);
+    }
+
+    public void ubahGoal(int posx,int posy,int radius){
+        this.goal = new Lingkaran(posx,posy,radius);
     }
 
     //yg disimpen tuh index spinner nya
@@ -141,6 +170,23 @@ public class Presenter {
         this.highScoreArrayList.add(score);
         this.updateHighScoreArray();
     }
+
+    public void gerakPlayer(int idx){
+
+            obj.get(idx).setPosX(obj.get(idx).getSpeedX()+obj.get(idx).getPosX());
+            obj.get(idx).setPosY(obj.get(idx).getSpeedY()+obj.get(idx).getPosY());
+
+    }
+    public void gerakPlayer(int idx,boolean x,boolean y){
+        if(x) {
+            obj.get(idx).setPosX(obj.get(idx).getSpeedX() + obj.get(idx).getPosX());
+        }
+        if(y) {
+            obj.get(idx).setPosY(obj.get(idx).getSpeedY() + obj.get(idx).getPosY());
+        }
+
+    }
+
 
     public boolean cekCollide(Lingkaran l1,Lingkaran l2){
         double xDif = l1.getPosX() - l2.getPosX();
