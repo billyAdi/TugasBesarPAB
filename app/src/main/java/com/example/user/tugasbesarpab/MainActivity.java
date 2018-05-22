@@ -125,7 +125,6 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         FragmentTransaction ft=this.fragmentManager.beginTransaction();
-        //MenuItem itm = findViewById(R.id.nav_exit);
         if (id == R.id.nav_highscore) {
             if(this.highScoreFragment.isAdded()){
                 ft.show(this.highScoreFragment);
@@ -138,7 +137,6 @@ public class MainActivity extends AppCompatActivity
                 ft.hide(this.settingsFragment);
             }
             ft.hide(this.mainMenuFragment);
-            //itm.setTitle("Back");
             getSupportActionBar().setTitle("High Score");
 
             ft.commit();
@@ -148,12 +146,10 @@ public class MainActivity extends AppCompatActivity
             if(this.highScoreFragment.isAdded()){
                 ft.hide(this.highScoreFragment);
             }
-            //itm.setTitle("Back");
             ft.hide(this.mainMenuFragment);
             getSupportActionBar().setTitle("Settings");
             ft.commit();
         } else if (id == R.id.nav_exit) {
-            //itm.setTitle("Exit");
             if(this.settingsFragment.isVisible()){
                 ft.hide(this.settingsFragment);
                 if(this.highScoreFragment.isAdded()) {

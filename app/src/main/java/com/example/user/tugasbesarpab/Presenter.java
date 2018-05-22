@@ -134,12 +134,11 @@ public class Presenter {
         this.goal = new Lingkaran(posx,posy,radius);
     }
 
-    //yg disimpen tuh index spinner nya
+
     public void saveSettings(int speed,int color1, int color2,int bonus){
         this.settingManager.saveSettings(speed,color1,color2,bonus);
     }
 
-    //load index nya ke settings fragment
     public int[] loadSettings(){
         return this.settingManager.loadSettings();
     }
