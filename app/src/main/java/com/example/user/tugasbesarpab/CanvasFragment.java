@@ -21,6 +21,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
+import java.util.ArrayList;
+
 import static android.content.Context.SENSOR_SERVICE;
 
 /**
@@ -326,8 +328,9 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
                 }
             }
         }
-        
-        for(int i =0;i<jumlahBonus;i++){
+        int count = presenter.getBonusCount();
+        ArrayList arr = new ArrayList();
+        for(int i =0;i<count;i++){
             Lingkaran bonus = this.presenter.getBonus(i);
             boolean status=true;
             for(int j=0;j<size&&status;j++) {
@@ -335,12 +338,14 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
 
                 if (this.presenter.cekCollide(bonus, player)) {
                     this.bonusCounter++;
-                    presenter.removeBonus(i);
+                    arr.add(i);
                 } else {
                     this.mCanvas.drawCircle(bonus.getPosX(), bonus.getPosY(), bonus.getRad(), this.paint3);
                 }
             }
         }
+
+        presenter.removeBonus(arr);
 
 
         if(size>1) {
@@ -382,8 +387,8 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
                 }
                 else {
 
-
-                    if (player1.getSpeedX() < player2.getSpeedX()) {
+/*
+                    if (player1.getSpeedX() < player2.getSpeedX() || player2.getSpeedX()==0) {
                         player1.setSpeedX(operatorx * player1.getSpeedX());
                         x1=true;
 
@@ -392,7 +397,7 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
                         x2=true;
                     }
 
-                    if (player1.getSpeedY() < player2.getSpeedY()) {
+                    if (player1.getSpeedY() < player2.getSpeedY() || player2.getSpeedY()==0) {
                         player1.setSpeedY(operatory * player1.getSpeedY());
                         y1=true;
                     } else {
@@ -400,8 +405,22 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
                         y2=true;
 
                     }
+*/                      int speedx1 = player1.getSpeedX();
+                      int speedy1 = player1.getSpeedY();
+                      int speedx2 = player2.getSpeedX();
+                      int speedy2 = player2.getSpeedY();
 
+                        player1.setSpeedX(operatorx * player1.getSpeedX());
+                        x1=true;
 
+                        player2.setSpeedX(operatorx * player2.getSpeedX());
+                        x2=true;
+
+                        player1.setSpeedY(operatory * player1.getSpeedY());
+                        y1=true;
+
+                        player2.setSpeedY(operatory * player2.getSpeedY());
+                        y2=true;
                 }
 
             }

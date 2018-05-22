@@ -56,9 +56,13 @@ public class Presenter {
     public Lingkaran getBonus(int i){
         return this.bonus.get(i);
     }
-
-    public void removeBonus(int i){
-         this.bonus.remove(i);
+    public int getBonusCount(){
+        return this.bonus.size();
+    }
+    public void removeBonus(ArrayList arr){
+        for(int i =0;i<arr.size();i++) {
+            this.bonus.remove((int)arr.get(i));
+        }
     }
 
     public Lingkaran getEnd(){
@@ -88,10 +92,10 @@ public class Presenter {
 
                 int temp = player.getPosX() + player.getSpeedX();
                 if (temp < player.getRad()) {
-                    player.setSpeedX(player.getSpeedX() / 2);
+                    player.setSpeedX(0);
                     temp = player.getRad();
                 } else if (temp >= (canvasWidth - player.getRad())) {
-                    player.setSpeedX(player.getSpeedX() / 2);
+                    player.setSpeedX(0);
                     temp = canvasWidth - player.getRad();
                 }
 
@@ -99,10 +103,10 @@ public class Presenter {
 
                 temp = player.getPosY() + player.getSpeedY();
                 if (temp < player.getRad()) {
-                    player.setSpeedY(player.getSpeedY() / 2);
+                    player.setSpeedY(0);
                     temp = player.getRad();
                 } else if (temp >= (canvasHeight - player.getRad())) {
-                    player.setSpeedY(player.getSpeedY() / 2);
+                    player.setSpeedY(0);
                     temp = canvasHeight - player.getRad();
                 }
 
