@@ -277,8 +277,8 @@ public class CanvasFragment extends Fragment implements View.OnClickListener,Sen
         this.paint2.setColor(this.setting.getColor2());
         this.paint3.setColor(Color.CYAN);
 
-        radius1=100;
-        radius2=150;
+        radius1=25;
+        radius2=40;
         this.presenter.addObj(radius1+(int)(Math.random() * (ivCanvas.getWidth()-2*radius1)),radius1+(int)(Math.random() * (ivCanvas.getHeight()-2*radius1)),radius1);
         this.presenter.addObj(radius1+(int)(Math.random() * (ivCanvas.getWidth()-2*radius1)),radius1+(int)(Math.random() * (ivCanvas.getHeight()-2*radius1)),radius1);
 
